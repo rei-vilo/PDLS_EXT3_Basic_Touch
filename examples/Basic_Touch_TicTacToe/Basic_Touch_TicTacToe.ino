@@ -20,7 +20,7 @@
 #include "Energia.h"
 #else // Arduino general
 #include "Arduino.h"
-#endif // end IDE
+#endif // SDK
 
 // Set parameters
 #define PLAYER_NONE 0

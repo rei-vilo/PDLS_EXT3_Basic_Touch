@@ -27,7 +27,7 @@
 #include "Energia.h"
 #else // Arduino general
 #include "Arduino.h"
-#endif // end IDE
+#endif // SDK
 
 #ifndef hV_SCREEN_BUFFER_RELEASE
 ///
@@ -47,6 +47,16 @@
 #else
 #error FONT_MODE not defined
 #endif // FONT_MODE
+
+///
+/// @brief Touch events
+/// @{
+#define TOUCH_EVENT_NONE 0 ///< no event
+#define TOUCH_EVENT_PRESS 1 ///< press event
+#define TOUCH_EVENT_RELEASE 2 ///< release event
+#define TOUCH_EVENT_MOVE 3 ///< move event
+/// @}
+///
 
 ///
 /// @brief Generic class for buffered LCD
@@ -130,6 +140,7 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
     virtual uint16_t screenDiagonal();
     ///
 
+    ///
     /// @brief Screen colour depth
     /// @return colour depth, in bits
     /// @note Examples: BW=1, BWR=2, RGB565=16
@@ -241,7 +252,7 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
 
     ///
     /// @brief Select font number
-    /// @param font default=0, 0..fontMax()-1
+    /// @param font default = 0, 0..fontMax()-1
     ///
     virtual void selectFont(uint8_t font);
 
@@ -280,8 +291,8 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
 
     ///
     /// @brief Character size, x-axis
-    /// @param character character to evaluate, default=0=font general size
-    /// @return horizontal size of character for current font, in pixels
+    /// @param character character to evaluate, default = 0 = font general size
+    /// @return horizontal size of the font for the specified character, in pixels
     /// @note With setSpaceX included
     /// @note In variable font, each character has a specific size.
     /// The general size is indicative.
@@ -402,7 +413,7 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
     /// @brief Orient coordinates and check within screen
     /// @param[out] x1 x coordinate
     /// @param[out] y1 y coordinate
-    /// @return false=success, true=error
+    /// @return false = success, true = error
     ///
     virtual bool _orientCoordinates(uint16_t & x1, uint16_t & y1) = 0; // compulsory
 
@@ -457,7 +468,9 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
     bool _touchEvent;
     uint8_t _touchTrim, _fsmArea;
     uint16_t _touchXmin, _touchXmax, _touchYmin, _touchYmax;
+
 #endif // TOUCH_MODE
+
     /// @endcond
 };
 

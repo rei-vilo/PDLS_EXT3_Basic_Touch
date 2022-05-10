@@ -579,6 +579,17 @@ bool hV_Screen_Buffer::getTouchInterrupt()
 }
 
 // Touch functions
+void hV_Screen_Buffer::clearTouch()
+{
+    uint16_t tx, ty, tz, tt;
+    while (getTouch(tx, ty, tz, tt))
+    // while (getTouchInterrupt())
+    {
+        delay(10);
+    }
+    _touchEvent = TOUCH_EVENT_NONE;
+}
+
 void hV_Screen_Buffer::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t & z0, uint16_t & t0)
 {
     x0 = 0;

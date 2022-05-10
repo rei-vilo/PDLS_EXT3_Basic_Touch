@@ -16,8 +16,8 @@
 /// * 3.70"-Touch reference xTP370PGH0x
 ///
 /// @author Rei Vilo
-/// @date 14 Mar 2022
-/// @version 530
+/// @date 28 Mar 2022
+/// @version 531
 ///
 /// @copyright (c) Rei Vilo, 2010-2022
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
@@ -50,7 +50,7 @@
 ///
 /// @brief Library release number
 ///
-#define SCREEN_EPD_EXT3_RELEASE 530
+#define SCREEN_EPD_EXT3_RELEASE 531
 
 // Other libraries
 #include "SPI.h"
@@ -250,7 +250,7 @@ class Screen_EPD_EXT3_Fast final : public hV_Screen_Buffer
     uint32_t _sizePageColour, _sizeFrame;
     uint8_t _refreshTime;
 
-   // === Touch
+    // === Touch
 #if (TOUCH_MODE != USE_TOUCH_NONE)
 
     uint8_t _touchAddress;

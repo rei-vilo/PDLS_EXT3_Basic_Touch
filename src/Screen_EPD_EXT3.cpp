@@ -14,6 +14,7 @@
 // Release 509: Added eScreen_EPD_EXT3_271_Fast
 // Release 527: Added support for ESP32 PSRAM
 // Release 530: Added support for new 3.70"-Touch
+// Release 531: Ready for hV_GUI_Basic
 //
 
 // Library header
@@ -358,7 +359,7 @@ void Screen_EPD_EXT3_Fast::invert(bool flag)
 void Screen_EPD_EXT3_Fast::_setPoint(uint16_t x1, uint16_t y1, uint16_t colour)
 {
     // Orient and check coordinates are within screen
-    // _orientCoordinates() returns false=success, true=error
+    // _orientCoordinates() returns false = success, true = error
     if (_orientCoordinates(x1, y1))
     {
         return;

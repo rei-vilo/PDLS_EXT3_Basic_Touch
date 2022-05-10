@@ -27,7 +27,7 @@
 #include "Energia.h"
 #else // Arduino general
 #include "Arduino.h"
-#endif // end IDE
+#endif // SDK
 
 #ifndef PDLS_EXT3_BASIC_FAST_RELEASE
 #define PDLS_EXT3_BASIC_FAST_RELEASE 509
