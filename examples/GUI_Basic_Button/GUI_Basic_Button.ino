@@ -69,8 +69,6 @@ void displayGUI()
 
     myScreen.clear();
     myScreen.setOrientation(3);
-    // myScreen.gText(0, 0, __FILE__);
-    // myScreen.gText(0, myScreen.characterSizeY(), myScreen.WhoAmI());
 
     myGUI.begin();
 

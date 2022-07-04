@@ -15,6 +15,7 @@
 // Release 527: Added support for ESP32 PSRAM
 // Release 530: Added support for new 3.70"-Touch
 // Release 531: Ready for hV_GUI_Basic
+// Release 533: Improved touch release
 //
 
 // Library header
@@ -721,6 +722,11 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
             y0 = _touchY;
             z0 = 0x16;
         }
+        else if (_touchPrevious == TOUCH_EVENT_NONE)
+        {
+            t0 = TOUCH_EVENT_NONE;
+            z0 = 0;
+        }
     }
     else if (_codeSize == 0x37)
     {
@@ -773,6 +779,11 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
             x0 = _touchX;
             y0 = _touchY;
             z0 = 0x16;
+        }
+        else if (_touchPrevious == TOUCH_EVENT_NONE)
+        {
+            t0 = TOUCH_EVENT_NONE;
+            z0 = 0;
         }
     }
 }

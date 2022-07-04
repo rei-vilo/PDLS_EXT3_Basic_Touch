@@ -1,23 +1,23 @@
 ///
 /// @file Screen_EPD_EXT3.h
-/// @brief Driver for Pervasive Displays iTC monochrome screens with EXT3
+/// @brief Driver for Pervasive Displays iTC monochrome touch-screens and EXT3 board
 ///
 /// @details Project Pervasive Displays Library Suite
 /// @n Based on highView technology
 ///
-/// @n @b B-S-F
+/// @n @b B-T-F
 /// * Edition: Basic
 /// * Family: Touch 2.70-P 3.70-P
 /// * Update: Fast
 /// * Feature: none
 ///
 /// @n Supported screens
-/// * 2.70"-Touch reference xTP270PGH0x (not tested)
+/// * 2.70"-Touch reference xTP270PGH0x
 /// * 3.70"-Touch reference xTP370PGH0x
 ///
 /// @author Rei Vilo
-/// @date 28 Mar 2022
-/// @version 531
+/// @date 21 Jun 2022
+/// @version 533
 ///
 /// @copyright (c) Rei Vilo, 2010-2022
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
@@ -37,7 +37,7 @@
 #include "Energia.h"
 #else // Arduino general
 #include "Arduino.h"
-#endif // IDE
+#endif // SDK
 
 // Configuration
 #include "hV_Configuration.h"
@@ -50,7 +50,7 @@
 ///
 /// @brief Library release number
 ///
-#define SCREEN_EPD_EXT3_RELEASE 531
+#define SCREEN_EPD_EXT3_RELEASE 533
 
 // Other libraries
 #include "SPI.h"
@@ -76,8 +76,8 @@
 ///
 /// @brief Class for Pervasive Displays iTC monochome touch screens
 /// @details Screen controllers
-/// * LCD: propietary, SPI
-/// * touch: no touch
+/// * LCD: proprietary, SPI
+/// * touch: proprietary, I2C
 /// * fonts: no fonts
 ///
 /// @note All commands work on the frame-buffer,
