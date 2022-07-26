@@ -39,8 +39,8 @@ Software
 
 Hardware
 
-* Pervasive Displays [EPD Extension Kit Gen 3 (EXT3-1 and EXT3-Touch)](https://www.pervasivedisplays.com/product/epd-extension-kit-gen-3-EXT3-Touch/)
-* Pervasive Displays iTC [monochrome screens](https://www.pervasivedisplays.com/products/?_sft_etc_itc=itc&_sft_product_colour=black-white)
+* Pervasive Displays [EPD Extension Kit Gen 3 (EXT3-1)](https://www.pervasivedisplays.com/product/epd-extension-kit-gen-3-EXT3/) and [Touch expansion board (EXT3-Touch)](https://www.pervasivedisplays.com/product/touch-expansion-board-ext3-touch/)
+* Pervasive Displays iTC [monochrome screens with touch](https://www.pervasivedisplays.com/products/?_sft_etc_itc=tp)
 
 ## Licence
 
