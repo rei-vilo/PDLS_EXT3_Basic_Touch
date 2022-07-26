@@ -12,11 +12,7 @@ Please refer to [PDLS_EXT3_Basic](https://github.com/rei-vilo/PDLS_EXT3_Basic/is
 + Text routines
 + Fast update
 + Touch management
-<<<<<<< Updated upstream
 + GUI with button and text
-=======
-- HMI library
->>>>>>> Stashed changes
 + Four extended fonts
 + Go to the [documentation](https://rei-vilo.github.io/PDLS_EXT3_Basic_Documentation/index.html) 
 
