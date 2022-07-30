@@ -2,10 +2,12 @@
 
 ![Arduino lint](https://github.com/rei-vilo/PDLS_EXT3_Basic_Touch/actions/workflows/main.yml/badge.svg)
 
-Library for [Pervasive Displays](https://www.pervasivedisplays.com) 
+The Pervasive Displays Library Suite is specifically designed for the [Pervasive Displays](https://www.pervasivedisplays.com) e-paper screens and EXT3 extension board.
 
-+ [EPD Extension Kit Gen 3 (EXT3-1 and EXT3-Touch)](https://www.pervasivedisplays.com/product/epd-extension-kit-gen-3-EXT3-Touch/) and 
-+ iTC [monochrome touch](https://www.pervasivedisplays.com/product/2-71-e-ink-display-aurora-mb-v231/) screens 
+The **PDLS_EXT3_Basic_Touch** provides a high-level interface to drive the e-paper screens with embedded fast update and capacitive touch:
+
++ [EPD Extension Kit Gen 3 (EXT3 or EXT3-1)](https://www.pervasivedisplays.com/product/epd-extension-kit-gen-3-EXT3/) and [Touch Expansion Board for EXT3 (EXT3-Touch)](https://www.pervasivedisplays.com/product/touch-expansion-board-ext3-touch/); and
++ iTC [monochrome touch](https://www.pervasivedisplays.com/product/2-71-e-ink-display-aurora-mb-v231/) screens.
 
 Please refer to [PDLS_EXT3_Basic](https://github.com/rei-vilo/PDLS_EXT3_Basic/issues) for reporting issues and contributing pull requests.
 
