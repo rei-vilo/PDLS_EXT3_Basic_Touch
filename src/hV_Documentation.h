@@ -7,7 +7,10 @@
 ///
 /// @mainpage Pervasive Displays Library Suite - Basic edition
 ///
-/// @details The Pervasive Displays Library Suite is specifically designed for the [Pervasive Displays](https://www.pervasivedisplays.com) e-paper screens and EXT3 extension board.
+/// @details The Pervasive Displays Library Suite is specifically designed for the [Pervasive Displays](https://www.pervasivedisplays.com/) e-paper screens and EXT3 extension board.
+///
+/// @image html Logo-PDI-text-320.jpeg
+/// @image latex Logo-PDI-text-320.pdf width=10cm
 ///
 /// It provides a high-level interface to drive the e-paper screens with global, fast and partial update, supports capacitive touch and haptic feed-back.
 ///
