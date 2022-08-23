@@ -57,7 +57,6 @@ void wait(uint8_t second)
     Serial.print("         \r");
 }
 
-
 #if (DISPLAY_TOUCH == 1)
 ///
 /// @brief Minimal test screen

@@ -16,7 +16,7 @@
 // Release 530: Added support for new 3.70"-Touch
 // Release 531: Ready for hV_GUI_Basic
 // Release 533: Improved touch release
-//
+// Release 541: Improved support for ESP32//
 
 // Library header
 #include "SPI.h"
@@ -57,7 +57,6 @@ SPISettings _settingScreen;
 #define TOUCH_370_ADDRESS 0x38
 
 #endif // TOUCH_MODE
-
 
 uint8_t data1[] = {0xff, 0x8f};
 uint8_t data4[] = {0x07};
@@ -199,10 +198,17 @@ void Screen_EPD_EXT3_Fast::begin()
 
 #else
 
-    // SPI.setBitOrder(MSBFIRST);
-    // SPI.setDataMode(SPI_MODE0);
-    // SPI.setClockDivider(SPI_CLOCK_DIV32);
+#if defined(ARDUINO_ARCH_ESP32)
+
+    // Board ESP32-Pico-DevKitM-2 crashes if pins are not specified.
+    SPI.begin(14, 12, 13); // SCK MISO MOSI
+
+#else
+
     SPI.begin();
+
+#endif // ARDUINO_ARCH_ESP32
+
     SPI.beginTransaction(_settingScreen);
 
 #endif // ENERGIA

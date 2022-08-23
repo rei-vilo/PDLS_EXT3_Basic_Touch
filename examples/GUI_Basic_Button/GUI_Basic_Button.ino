@@ -58,7 +58,6 @@ void wait(uint8_t second)
     Serial.print("         \r");
 }
 
-
 #if (DISPLAY_GUI == 1)
 
 GUI myGUI(&myScreen);
