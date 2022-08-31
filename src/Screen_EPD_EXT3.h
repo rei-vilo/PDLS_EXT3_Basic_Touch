@@ -16,8 +16,8 @@
 /// * 3.70"-Touch reference xTP370PGH0x
 ///
 /// @author Rei Vilo
-/// @date 22 Aug 2022
-/// @version 541
+/// @date 31 Aug 2022
+/// @version 542
 ///
 /// @copyright (c) Rei Vilo, 2010-2022
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
@@ -29,7 +29,7 @@
 ///
 /// @see https://creativecommons.org/licenses/by-sa/4.0/
 ///
-/// @n Consider the advanced or commercial editions for professionals or organisations and for commercial usage
+/// @n Consider the Evaluation or Commercial editions for professionals or organisations and for commercial usage
 ///
 
 // SDK

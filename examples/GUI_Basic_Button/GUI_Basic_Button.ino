@@ -1,6 +1,6 @@
 ///
 /// @file Basic_Touch_GUI.ino
-/// @brief Example of features for advanced edition
+/// @brief Example of features for Evaluation edition
 ///
 /// @details Library for Pervasive Displays EXT3 - Basic edition
 ///
