@@ -351,7 +351,7 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
                        uint16_t backColour = myColours.white);
     /// @}
 
-    /// @name   Touch
+    /// @name Touch
     /// @note Those functions are optional, and thus defined as empty and not compulsory.
     /// @{
 

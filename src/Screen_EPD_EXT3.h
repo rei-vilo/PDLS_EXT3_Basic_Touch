@@ -1,23 +1,23 @@
 ///
 /// @file Screen_EPD_EXT3.h
-/// @brief Driver for Pervasive Displays iTC monochrome touch-screens and EXT3 board
+/// @brief Driver for Pervasive Displays iTC monochrome touch screens with EXT3-1 and EXT-Touch boards
 ///
 /// @details Project Pervasive Displays Library Suite
 /// @n Based on highView technology
 ///
 /// @n @b B-T-F
 /// * Edition: Basic
-/// * Family: Touch 2.70-P 3.70-P
+/// * Family: Touch 2.70 3.70
 /// * Update: Fast
 /// * Feature: none
 ///
-/// @n Supported screens
+/// @n Supported screens with touch
 /// * 2.70"-Touch reference xTP270PGH0x
 /// * 3.70"-Touch reference xTP370PGH0x
 ///
 /// @author Rei Vilo
-/// @date 31 Oct 2022
-/// @version 550
+/// @date 12 Nov 2022
+/// @version 601
 ///
 /// @copyright (c) Rei Vilo, 2010-2022
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
@@ -42,23 +42,23 @@
 // Configuration
 #include "hV_Configuration.h"
 
-#if (hV_CONFIGURATION_RELEASE < 530)
-#error Required hV_CONFIGURATION_RELEASE 530
+#if (hV_CONFIGURATION_RELEASE < 600)
+#error Required hV_CONFIGURATION_RELEASE 600
 #endif // hV_CONFIGURATION_RELEASE
 
 #ifndef SCREEN_EPD_EXT3_RELEASE
 ///
 /// @brief Library release number
 ///
-#define SCREEN_EPD_EXT3_RELEASE 550
+#define SCREEN_EPD_EXT3_RELEASE 601
 
 // Other libraries
 #include "SPI.h"
 #include "Wire.h"
 #include "hV_Screen_Buffer.h"
 
-#if (hV_SCREEN_BUFFER_RELEASE < 507)
-#error Required hV_SCREEN_BUFFER_RELEASE 507
+#if (hV_SCREEN_BUFFER_RELEASE < 523)
+#error Required hV_SCREEN_BUFFER_RELEASE 523
 #endif // hV_SCREEN_BUFFER_RELEASE
 
 ///
@@ -74,11 +74,11 @@
 // Objects
 //
 ///
-/// @brief Class for Pervasive Displays iTC monochome touch screens
+/// @brief Class for Pervasive Displays iTC monochome touch screens with embedded fast update
 /// @details Screen controllers
 /// * LCD: proprietary, SPI
 /// * touch: proprietary, I2C
-/// * fonts: no fonts
+/// * fonts: no external fonts
 ///
 /// @note All commands work on the frame-buffer,
 /// to be displayed on screen with flush()
@@ -122,13 +122,14 @@ class Screen_EPD_EXT3_Fast final : public hV_Screen_Buffer
 
     ///
     /// @brief Update the display, fast update
-    /// @note Send the frame-buffer to the screen and refresh the screen
+    /// @note Display next frame-buffer on screen,
+    /// and copy next frame-buffer into old frame-buffer
     ///
     void flush();
 
     ///
     /// @brief Regenerate the panel
-    /// @details white-to-black-to-white cycle to reduce ghosting
+    /// @details White-to-black-to-white cycle to reduce ghosting
     ///
     void regenerate();
 
@@ -151,12 +152,6 @@ class Screen_EPD_EXT3_Fast final : public hV_Screen_Buffer
     /// @n @b More: @ref Coordinate, @ref Colour
     ///
     uint16_t readPixel(uint16_t x1, uint16_t y1);
-
-    ///
-    /// @brief Screen refresh time for the BWR screens
-    /// @return Estimated refresh time in seconds
-    ///
-    uint8_t getRefreshTime();
 
   protected:
     /// @cond
@@ -235,10 +230,15 @@ class Screen_EPD_EXT3_Fast final : public hV_Screen_Buffer
     // No energy
 
     // * Other functions specific to the screen
+    void COG_initial(uint8_t updateMode);
+    void COG_getUserData();
+    void COG_update(void);
+    void COG_powerOff(void);
+
     // Screen independent variables
     uint8_t * _newImage;
     bool _invert;
-    uint16_t _widthScreen, _heightScreen;
+    uint16_t _screenSizeV, _screenSizeH;
 
     // Screen dependent variables
     pins_t _pin;
@@ -246,9 +246,9 @@ class Screen_EPD_EXT3_Fast final : public hV_Screen_Buffer
     uint8_t _codeExtra;
     uint8_t _codeSize;
     uint8_t _codeType;
-    uint16_t _widthBuffer, _heightBuffer, _depthBuffer, _numberBuffer;
-    uint32_t _sizePageColour, _sizeFrame;
-    uint8_t _refreshTime;
+    uint8_t _codeDriver; // specific for small
+    uint16_t _bufferSizeV, _bufferSizeH, _bufferDepth;
+    uint32_t _pageColourSize, _frameSize;
 
     // === Touch
 #if (TOUCH_MODE != USE_TOUCH_NONE)

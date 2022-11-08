@@ -9,7 +9,7 @@ The Pervasive Displays Library Suite is specifically designed for the [Pervasive
 The **PDLS_EXT3_Basic_Touch** provides a high-level interface to drive the e-paper screens with embedded fast update and capacitive touch:
 
 + [EPD Extension Kit Gen 3 (EXT3 or EXT3-1)](https://www.pervasivedisplays.com/product/epd-extension-kit-gen-3-EXT3/) and [Touch Expansion Board for EXT3 (EXT3-Touch)](https://www.pervasivedisplays.com/product/touch-expansion-board-ext3-touch/); and
-+ iTC [monochrome touch](https://www.pervasivedisplays.com/product/2-71-e-ink-display-aurora-mb-v231/) screens.
++ iTC [monochrome screens with touch](https://www.pervasivedisplays.com/products/?_sft_etc_itc=tp).
 
 Please refer to [PDLS_EXT3_Basic](https://github.com/rei-vilo/PDLS_EXT3_Basic/issues) for reporting issues and contributing pull requests.
 
