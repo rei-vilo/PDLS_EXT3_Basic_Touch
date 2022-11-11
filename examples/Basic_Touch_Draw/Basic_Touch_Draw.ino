@@ -5,8 +5,8 @@
 /// @details Library for Pervasive Displays EXT3 - Basic level
 ///
 /// @author Rei Vilo
-/// @date 09 Mar 2022
-/// @version 530
+/// @date 12 Nov 2022
+/// @version 601
 ///
 /// @copyright (c) Rei Vilo, 2010-2022
 /// @copyright CC = BY SA NC
@@ -37,7 +37,7 @@
 // --- Touch
 #include "PDLS_EXT3_Basic_Touch.h"
 
-// Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_370_Touch, boardLaunchPad);
+// Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_270_Touch, boardRaspberryPiPico_RP2040);
 Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_370_Touch, boardRaspberryPiPico_RP2040);
 
 // Prototypes
