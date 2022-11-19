@@ -19,6 +19,7 @@
 // Release 541: Improved support for ESP32
 // Release 550: Tested Xiao ESP32-C3 with SPI exception
 // Release 601: Added support for screens with embedded fast update
+// Release 602: Improve functions structure
 //
 
 // Library header
@@ -106,21 +107,18 @@ void Screen_EPD_EXT3_Fast::COG_initial(uint8_t updateMode)
 
 void Screen_EPD_EXT3_Fast::COG_getUserData()
 {
-    // 2.7” = 0xcf, 0x8d
-    // 3.7” = 0xcf, 0x0f
-
     uint16_t _codeSizeType = _eScreen_EPD_EXT3 & 0xffff;
 
     // Size	cSize	cType	Driver
     switch (_codeSizeType)
     {
-        case 0x2709:
+        case 0x2709: // 2.70” = 2.71” = 0xcf, 0x8d
 
             index00_data[0] = 0xcf;
             index00_data[1] = 0x8d;
             break;
 
-        case 0x370C:
+        case 0x370C: // 3.70” = 0xcf, 0x0f
 
             index00_data[0] = 0xcf;
             index00_data[1] = 0x8f;
@@ -130,6 +128,16 @@ void Screen_EPD_EXT3_Fast::COG_getUserData()
 
             break;
     }
+}
+
+void Screen_EPD_EXT3_Fast::COG_sendImageDataFast()
+{
+    uint8_t * nextBuffer = _newImage;
+    uint8_t * previousBuffer = _newImage + _pageColourSize;
+
+    _sendIndexData(0x10, previousBuffer, _frameSize); // Previous frame
+    _sendIndexData(0x13, nextBuffer, _frameSize); // Next frame
+    memcpy(previousBuffer, nextBuffer, _frameSize); // Copy displayed next to previous
 }
 
 void Screen_EPD_EXT3_Fast::COG_update()
@@ -384,16 +392,11 @@ String Screen_EPD_EXT3_Fast::WhoAmI()
 
 void Screen_EPD_EXT3_Fast::flush()
 {
-    // Configure
+    // Initialise
     COG_initial(UPDATE_FAST);
 
     // Send image data
-    uint8_t * nextBuffer = _newImage;
-    uint8_t * previousBuffer = _newImage + _pageColourSize;
-
-    _sendIndexData(0x10, previousBuffer, _frameSize); // Previous frame
-    _sendIndexData(0x13, nextBuffer, _frameSize); // Next frame
-    memcpy(previousBuffer, nextBuffer, _frameSize); // Copy displayed next to previous
+    COG_sendImageDataFast();
 
     // Update
     COG_update();
@@ -423,6 +426,17 @@ void Screen_EPD_EXT3_Fast::clear(uint16_t colour)
         // physical white 10
         memset(_newImage, 0xff, _pageColourSize);
     }
+}
+
+void Screen_EPD_EXT3_Fast::regenerate()
+{
+    clear(myColours.black);
+    flush();
+    delay(100);
+
+    clear(myColours.white);
+    flush();
+    delay(100);
 }
 
 void Screen_EPD_EXT3_Fast::invert(bool flag)
@@ -618,17 +632,6 @@ void Screen_EPD_EXT3_Fast::_sendIndexData(uint8_t index, const uint8_t * data, u
     delayMicroseconds(50);
 
     digitalWrite(_pin.panelCS, HIGH); // CS High = Unselect
-}
-
-void Screen_EPD_EXT3_Fast::regenerate()
-{
-    clear(myColours.black);
-    flush();
-
-    delay(100);
-
-    clear(myColours.white);
-    flush();
 }
 
 //
@@ -853,3 +856,7 @@ bool Screen_EPD_EXT3_Fast::_getInterruptTouch()
     }
 }
 #endif // TOUCH_MODE
+//
+// === End of Touch section
+//
+
