@@ -6,8 +6,8 @@
 /// @n Based on highView technology
 ///
 /// @author Rei Vilo
-/// @date 23 Aug 2021
-/// @version 509
+/// @date 01 Dec 2022
+/// @version 603
 ///
 /// @copyright (c) Rei Vilo, 2010-2022
 /// @copyright All rights reserved
@@ -30,7 +30,7 @@
 #endif // SDK
 
 #ifndef PDLS_EXT3_BASIC_FAST_RELEASE
-#define PDLS_EXT3_BASIC_FAST_RELEASE 509
+#define PDLS_EXT3_BASIC_FAST_RELEASE 603
 #include "Screen_EPD_EXT3.h"
 
 #endif // PDLS_EXT3_BASIC_FAST_RELEASE
