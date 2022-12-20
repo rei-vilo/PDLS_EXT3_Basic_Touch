@@ -16,10 +16,10 @@
 /// * 3.70"-Touch reference xTP370PGH0x
 ///
 /// @author Rei Vilo
-/// @date 21 Nov 2022
-/// @version 602
+/// @date 21 Dec 2022
+/// @version 604
 ///
-/// @copyright (c) Rei Vilo, 2010-2022
+/// @copyright (c) Rei Vilo, 2010-2023
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 ///
 /// The highView Library Suite is shared under the Creative Commons licence Attribution-ShareAlike 4.0 International (CC BY-SA 4.0).
@@ -50,7 +50,7 @@
 ///
 /// @brief Library release number
 ///
-#define SCREEN_EPD_EXT3_RELEASE 602
+#define SCREEN_EPD_EXT3_RELEASE 604
 
 // Other libraries
 #include "SPI.h"
@@ -78,7 +78,7 @@
 /// @details Screen controllers
 /// * LCD: proprietary, SPI
 /// * touch: proprietary, I2C
-/// * fonts: no external fonts
+/// * fonts: no external Flash
 ///
 /// @note All commands work on the frame-buffer,
 /// to be displayed on screen with flush()
@@ -232,9 +232,9 @@ class Screen_EPD_EXT3_Fast final : public hV_Screen_Buffer
     // * Other functions specific to the screen
     void COG_initial(uint8_t updateMode);
     void COG_getUserData();
-    void COG_update(void);
-    void COG_powerOff(void);
     void COG_sendImageDataFast();
+    void COG_update(uint8_t updateMode);
+    void COG_powerOff();
 
     // Screen independent variables
     uint8_t * _newImage;
@@ -249,6 +249,7 @@ class Screen_EPD_EXT3_Fast final : public hV_Screen_Buffer
     uint8_t _codeType;
     uint16_t _bufferSizeV, _bufferSizeH, _bufferDepth;
     uint32_t _pageColourSize, _frameSize;
+    bool _flag50;
 
     // === Touch
 #if (TOUCH_MODE != USE_TOUCH_NONE)
@@ -265,6 +266,8 @@ class Screen_EPD_EXT3_Fast final : public hV_Screen_Buffer
 
 #endif // TOUCH_MODE
 
+    // === SD
+    // No SD
     /// @endcond
 };
 
