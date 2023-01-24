@@ -61,16 +61,6 @@
 #error Required hV_SCREEN_BUFFER_RELEASE 523
 #endif // hV_SCREEN_BUFFER_RELEASE
 
-///
-/// @brief Touch events
-/// @{
-#define TOUCH_EVENT_NONE 0 ///< no event
-#define TOUCH_EVENT_PRESS 1 ///< press event
-#define TOUCH_EVENT_RELEASE 2 ///< release event
-#define TOUCH_EVENT_MOVE 3 ///< move event
-/// @}
-///
-
 // Objects
 //
 ///
@@ -122,8 +112,7 @@ class Screen_EPD_EXT3_Fast final : public hV_Screen_Buffer
 
     ///
     /// @brief Update the display, fast update
-    /// @note Display next frame-buffer on screen,
-    /// and copy next frame-buffer into old frame-buffer
+    /// @note Display next frame-buffer on screen and copy next frame-buffer into old frame-buffer
     ///
     void flush();
 

@@ -14,6 +14,8 @@
 //
 // See hV_GUI.h and ReadMe.txt for references
 //
+// Release 531: Improved performance
+// Release 605: Improved elements link to GUI
 //
 
 // Library header
@@ -23,26 +25,16 @@
 DRV2605L myDRV2605L(HAPTICS_MODE);
 #endif // HAPTICS_MODE
 
-// ---- Shared settings
-Screen_EPD_EXT3_Fast * _pScreenGUI;
-uint16_t _colourFrontGUI, _colourBackGUI, _colourMiddleGUI;
-bool _delegateGUI = true;
-bool _enableGUI = true;
-uint8_t _styleGUI = 0;
-
 GUI::GUI(Screen_EPD_EXT3_Fast * screen)
 {
-    _pScreenGUI = screen;
+    _pScreen = screen;
 }
 
 void GUI::begin()
 {
-    _colourFrontGUI = myColours.black;
-    _colourBackGUI = myColours.white;
-    _colourMiddleGUI = myColours.grey;
-    _delegateGUI = true;
-    _enableGUI = true;
-    _styleGUI = 0;
+    _colourFront = myColours.black;
+    _colourBack = myColours.white;
+    _delegate = true;
 
 #if (HAPTICS_MODE != USE_HAPTICS_NONE)
     myDRV2605L.begin();
@@ -51,22 +43,22 @@ void GUI::begin()
 
 void GUI::setColours(uint16_t frontColour, uint16_t backColour)
 {
-    _colourFrontGUI = frontColour;
-    _colourBackGUI = backColour;
+    _colourFront = frontColour;
+    _colourBack = backColour;
 }
 
 void GUI::delegate(bool delegate)
 {
-    _delegateGUI = delegate;
+    _delegate = delegate;
 }
 
-// --- text
-text::text()
+// --- Text
+Text::Text(GUI * gui)
 {
-    ;
+    _pGUI = gui;
 }
 
-void text::dDefine(uint16_t x0, uint16_t y0, uint16_t dx, uint16_t dy,
+void Text::dDefine(uint16_t x0, uint16_t y0, uint16_t dx, uint16_t dy,
                    uint8_t size)
 {
     _x0 = x0;
@@ -76,76 +68,76 @@ void text::dDefine(uint16_t x0, uint16_t y0, uint16_t dx, uint16_t dy,
     _fontSize = size;
 }
 
-void text::draw(String text)
+void Text::draw(String text)
 {
-    _pScreenGUI->selectFont(_fontSize);
-    uint8_t k = _pScreenGUI->stringLengthToFitX(text, _dx - 8);
+    _pGUI->_pScreen->selectFont(_fontSize);
+    uint8_t k = _pGUI->_pScreen->stringLengthToFitX(text, _dx - 8);
 
     String _text = text.substring(0, k);
 
-    uint16_t _xt = _x0 + (_dx - _pScreenGUI->stringSizeX(_text)) / 2;
-    uint16_t _yt = _y0 + (_dy - _pScreenGUI->characterSizeY()) / 2;
+    uint16_t _xt = _x0 + (_dx - _pGUI->_pScreen->stringSizeX(_text)) / 2;
+    uint16_t _yt = _y0 + (_dy - _pGUI->_pScreen->characterSizeY()) / 2;
 
-    _pScreenGUI->setPenSolid(true);
-    _pScreenGUI->dRectangle(_x0, _y0, _dx, _dy, _colourBackGUI);
-    _pScreenGUI->gText(_xt, _yt, _text, _colourFrontGUI);
+    _pGUI->_pScreen->setPenSolid(true);
+    _pGUI->_pScreen->dRectangle(_x0, _y0, _dx, _dy, _pGUI->_colourBack);
+    _pGUI->_pScreen->gText(_xt, _yt, _text, _pGUI->_colourFront);
 
-    if (_delegateGUI)
+    if (_pGUI->_delegate)
     {
-        _pScreenGUI->flush();
+        _pGUI->_pScreen->flush();
     }
 }
 
-// ---- button
-button::button()
+// ---- Button
+Button::Button(GUI * gui)
 {
-    ;
+    _pGUI = gui;
 }
 
-void button::dStringDefine(uint16_t x0, uint16_t y0,
+void Button::dStringDefine(uint16_t x0, uint16_t y0,
                            uint16_t dx, uint16_t dy,
                            String text0,
                            uint8_t size0)
 {
-    text::dDefine(x0, y0, dx, dy, size0);
-    text::draw(text0);
+    Text::dDefine(x0, y0, dx, dy, size0);
+    Text::draw(text0);
     draw(fsmReleased);
 }
 
-void button::draw(fsmGUI_e fsm)
+void Button::draw(fsmGUI_e fsm)
 {
     // All cases
-    _pScreenGUI->setPenSolid(false);
-    _pScreenGUI->dRectangle(_x0 + 1, _y0 + 1, _dx - 2, _dy - 2, _colourFrontGUI);
+    _pGUI->_pScreen->setPenSolid(false);
+    _pGUI->_pScreen->dRectangle(_x0 + 1, _y0 + 1, _dx - 2, _dy - 2, _pGUI->_colourFront);
 
     switch (fsm)
     {
         case fsmTouched:
 
-            _pScreenGUI->dRectangle(_x0, _y0, _dx, _dy, _colourFrontGUI);
-            _pScreenGUI->dRectangle(_x0 + 2, _y0 + 2, _dx - 4, _dy - 4, _colourFrontGUI);
+            _pGUI->_pScreen->dRectangle(_x0, _y0, _dx, _dy, _pGUI->_colourFront);
+            _pGUI->_pScreen->dRectangle(_x0 + 2, _y0 + 2, _dx - 4, _dy - 4, _pGUI->_colourFront);
             break;
 
         default: // fsmReleased
 
-            _pScreenGUI->dRectangle(_x0, _y0, _dx, _dy, _colourBackGUI);
-            _pScreenGUI->dRectangle(_x0 + 2, _y0 + 2, _dx - 4, _dy - 4, _colourBackGUI);
+            _pGUI->_pScreen->dRectangle(_x0, _y0, _dx, _dy, _pGUI->_colourBack);
+            _pGUI->_pScreen->dRectangle(_x0 + 2, _y0 + 2, _dx - 4, _dy - 4, _pGUI->_colourBack);
             break;
     }
 
-    if (_delegateGUI)
+    if (_pGUI->_delegate)
     {
-        _pScreenGUI->flush();
+        _pGUI->_pScreen->flush();
     }
 }
 
-bool button::check(bool mode)
+bool Button::check(bool mode)
 {
     uint16_t x, y, z, t;
     bool flag = false;
 
     // down
-    if (_pScreenGUI->getTouch(x, y, z, t))
+    if (_pGUI->_pScreen->getTouch(x, y, z, t))
     {
         // pressed
         if ((x >= _x0) and (x < _x0 + _dx) and (y >= _y0) and (y < _y0 + _dy))
@@ -160,7 +152,7 @@ bool button::check(bool mode)
             do
             {
                 delay(100);
-                _pScreenGUI->getTouch(x, y, z, t);
+                _pGUI->_pScreen->getTouch(x, y, z, t);
             }
             while (t != TOUCH_EVENT_RELEASE);
 

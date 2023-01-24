@@ -49,16 +49,6 @@
 #endif // FONT_MODE
 
 ///
-/// @brief Touch events
-/// @{
-#define TOUCH_EVENT_NONE 0 ///< no event
-#define TOUCH_EVENT_PRESS 1 ///< press event
-#define TOUCH_EVENT_RELEASE 2 ///< release event
-#define TOUCH_EVENT_MOVE 3 ///< move event
-/// @}
-///
-
-///
 /// @brief Generic class for buffered LCD
 ///
 #warning USE_hV_SCREEN == USE_hV_SCREEN_SELF

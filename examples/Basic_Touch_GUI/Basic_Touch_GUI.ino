@@ -5,8 +5,8 @@
 /// @details Library for Pervasive Displays EXT3 - Basic edition
 ///
 /// @author Rei Vilo
-/// @date 21 Nov 2022
-/// @version 602
+/// @date 25 Jan 2023
+/// @version 605
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
 /// @copyright CC = BY SA NC
@@ -26,13 +26,19 @@
 #define DISPLAY_GUI 1
 
 // Include application, user and local libraries
+#include "Wire.h"
 #include "SPI.h"
 #include "PDLS_EXT3_Basic_Touch.h"
-#include "hV_GUI.h"
 
 #if (SCREEN_EPD_EXT3_RELEASE < 531)
 #error Required SCREEN_EPD_EXT3_RELEASE 531
 #endif SCREEN_EPD_EXT3_RELEASE
+
+#include "hV_GUI.h"
+
+#if (hV_GUI_BASIC_RELEASE < 605)
+#error Required hV_GUI_BASIC_RELEASE 605
+#endif hV_GUI_BASIC_RELEASE
 
 // Define structures and classes
 
@@ -72,8 +78,9 @@ void displayGUI()
 
     myGUI.begin();
 
-    button myFirst, mySecond;
-    text myText;
+    Button myButtonNormal(&myGUI);
+    Button myButtonInstant(&myGUI);
+    Text myText(&myGUI);
 
     uint16_t x = myScreen.screenSizeX();
     uint16_t y = myScreen.screenSizeY();
@@ -83,12 +90,12 @@ void displayGUI()
 
     myGUI.delegate(false);
 
-    myFirst.dStringDefine(dx * 1, dy * 3, dx * 2, dy, "Normal", fontText);
-    mySecond.dStringDefine(dx * 4, dy * 3, dx * 2, dy, "Instant", fontText);
+    myButtonNormal.dStringDefine(dx * 1, dy * 3, dx * 2, dy, "Normal", fontText);
+    myButtonInstant.dStringDefine(dx * 4, dy * 3, dx * 2, dy, "Instant", fontText);
     myText.dDefine(0, dy, x, dy, fontText);
 
-    myFirst.draw();
-    mySecond.draw();
+    myButtonNormal.draw();
+    myButtonInstant.draw();
     myText.draw("Empty");
 
     myScreen.flush();
@@ -102,7 +109,7 @@ void displayGUI()
         if (myScreen.getTouchInterrupt())
         {
             chrono32 = millis();
-            if (myFirst.check(checkNormal))
+            if (myButtonNormal.check(checkNormal))
             {
                 k -= 1;
                 chrono32 = millis() - chrono32;
@@ -111,7 +118,7 @@ void displayGUI()
             }
 
             chrono32 = millis();
-            if (mySecond.check(checkInstant))
+            if (myButtonInstant.check(checkInstant))
             {
                 k -= 1;
                 chrono32 = millis() - chrono32;

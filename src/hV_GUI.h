@@ -6,8 +6,8 @@
 /// @n Based on highView technology
 ///
 /// @author Rei Vilo
-/// @date 28 Feb 2022
-/// @version 531
+/// @date 25 Jan 2023
+/// @version 605
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
@@ -21,12 +21,15 @@
 ///
 /// @n Consider the Evaluation or Commercial editions for professionals or organisations and for commercial usage
 ///
+/// @warning Starting release 6.0.5,
+/// + Names of the Text and Button elements are now capitalised;
+/// + Text and Button constructors require a GUI object to which the element belongs as parameter.
 
 #ifndef hV_GUI_BASIC_RELEASE
 ///
 /// @brief Library release number
 ///
-#define hV_GUI_BASIC_RELEASE 531
+#define hV_GUI_BASIC_RELEASE 605
 
 // SDK
 #if defined(ENERGIA) // LaunchPad specific
@@ -62,6 +65,9 @@
 ///
 class GUI
 {
+    friend class Button;
+    friend class Text;
+
   public:
     ///
     /// @brief Constructor
@@ -91,6 +97,14 @@ class GUI
     /// @note If false, refresh managed by the caller
     ///
     void delegate(bool delegate = true);
+
+  private:
+    Screen_EPD_EXT3_Fast * _pScreen;
+    uint16_t _colourFront;
+    uint16_t _colourBack;
+    bool _delegate;
+    bool _enable;
+    uint8_t _style;
 };
 
 ///
@@ -104,17 +118,20 @@ enum fsmGUI_e
 };
 
 ///
-/// @class text
+/// @class Text
 /// @brief Text
 /// @details Display a text with format options
 ///
-class text
+class Text
 {
   public:
     ///
     /// @brief Constructor
+    /// @param gui &gui to which the element belongs
     ///
-    text();
+    Text(GUI * gui);
+
+    Text() = default;
 
     ///
     /// @brief Define a text box, vector coordinates
@@ -138,23 +155,25 @@ class text
 
   protected:
     /// @cond
+    GUI * _pGUI;
     uint16_t _x0, _y0, _dx, _dy;
     uint8_t _fontSize;
     /// @endcond
 };
 
 ///
-/// @class button
+/// @class Button
 /// @brief Button
 /// @details Button is an active text
 ///
-class button : public text
+class Button : public Text
 {
   public:
     ///
     /// @brief Constructor
+    /// param gui &gui to which the element belongs
     ///
-    button();
+    Button(GUI * gui);
 
     ///
     /// @brief Define button, vector coordinates
