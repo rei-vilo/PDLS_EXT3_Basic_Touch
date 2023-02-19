@@ -41,8 +41,8 @@
 // --- Touch
 #include "PDLS_EXT3_Basic_Touch.h"
 
-// Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_270_Touch, boardRaspberryPiPico_RP2040);
-Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_370_Touch, boardRaspberryPiPico_RP2040);
+// Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_271_09_Touch, boardRaspberryPiPico_RP2040);
+Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_370_0C_Touch, boardRaspberryPiPico_RP2040);
 
 uint16_t x, y, dx, dy;
 
