@@ -8,6 +8,7 @@ The Pervasive Displays Library Suite is specifically designed for the [Pervasive
 
 The **PDLS_EXT3_Basic_Touch** provides a high-level interface to drive the e-paper screens with embedded fast update and capacitive touch:
 
++ [EPD Pico Kit Touch (EPDK-271-Touch)](https://www.pervasivedisplays.com/product/touch-expansion-board-ext3-touch/#tab-3), which includes a Raspberry Pi Pico RP2040, the EXT3-1 and EXT3-Touch extension boards and a 2.71"-Touch monochrome panel with embedded fast update and capacitive touch; or
 + [EPD Extension Kit Gen 3 (EXT3 or EXT3-1)](https://www.pervasivedisplays.com/product/epd-extension-kit-gen-3-EXT3/) and [Touch Expansion Board for EXT3 (EXT3-Touch)](https://www.pervasivedisplays.com/product/touch-expansion-board-ext3-touch/); and
 + iTC [monochrome screens with touch](https://www.pervasivedisplays.com/products/?_sft_etc_itc=tp).
 
