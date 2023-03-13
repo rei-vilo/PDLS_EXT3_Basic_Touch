@@ -35,6 +35,7 @@ Software
 
 Hardware
 
++ [Assembing the Pervasive Displays EXT3-Touch](https://embeddedcomputing.weebly.com/assembing-the-pervasive-displays-ext3-touch.html)
 * [Connecting the Pervasive Displays e-Paper EPD Extension Kit Gen 3](https://embeddedcomputing.weebly.com/connecting-the-e-paper-epd-extension-kit-gen-3.html)
 
 ## Configuration
@@ -52,6 +53,8 @@ Hardware
 
 ## Licence
 
-[Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](./LICENCE.md)
+Copyright &copy; Rei Vilo, 2010-2023
+
+Licence [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](./LICENCE.md)
 
 ![](./by-sa.svg)
