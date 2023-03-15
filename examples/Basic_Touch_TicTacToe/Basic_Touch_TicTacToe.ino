@@ -5,8 +5,8 @@
 /// @details Library for Pervasive Displays EXT3 - Basic level
 ///
 /// @author Rei Vilo
-/// @date 21 Nov 2022
-/// @version 602
+/// @date 20 Mar 2023
+/// @version 607
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
 /// @copyright CC = BY SA NC
