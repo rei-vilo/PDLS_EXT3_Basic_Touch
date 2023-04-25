@@ -16,6 +16,7 @@
 //
 // Release 531: Improved performance
 // Release 605: Improved elements link to GUI
+// Release 608: Shared common debouncing module
 //
 
 // Library header
@@ -149,12 +150,16 @@ bool Button::check(bool mode)
 
             draw(fsmTouched);
 
-            do
+            // do
+            // {
+            //     delay(100);
+            //     _pGUI->_pScreen->getTouch(x, y, z, t);
+            // }
+            // while (t != TOUCH_EVENT_RELEASE);
+            while (_pGUI->_pScreen->getTouch(x, y, z, t)) // Debounce
             {
                 delay(100);
-                _pGUI->_pScreen->getTouch(x, y, z, t);
             }
-            while (t != TOUCH_EVENT_RELEASE);
 
             // Released
             if ((x >= _x0) and (x < _x0 + _dx) and (y >= _y0) and (y < _y0 + _dy))

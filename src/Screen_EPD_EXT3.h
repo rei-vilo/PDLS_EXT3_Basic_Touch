@@ -12,12 +12,12 @@
 /// * Feature: none
 ///
 /// @n Supported screens with touch
-/// * 2.70"-Touch reference xTP270PGH0x
+/// * 2.71"-Touch reference xTP271PGH0x
 /// * 3.70"-Touch reference xTP370PGH0x
 ///
 /// @author Rei Vilo
-/// @date 20 Mar 2023
-/// @version 607
+/// @date 20 Apr 2023
+/// @version 608
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
@@ -50,7 +50,7 @@
 ///
 /// @brief Library release number
 ///
-#define SCREEN_EPD_EXT3_RELEASE 607
+#define SCREEN_EPD_EXT3_RELEASE 608
 
 // Other libraries
 #include "SPI.h"

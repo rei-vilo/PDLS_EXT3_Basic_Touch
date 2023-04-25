@@ -6,8 +6,8 @@
 /// @n Based on highView technology
 ///
 /// @author Rei Vilo
-/// @date 25 Jan 2023
-/// @version 605
+/// @date 20 Apr 2023
+/// @version 608
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
@@ -29,7 +29,7 @@
 ///
 /// @brief Library release number
 ///
-#define hV_GUI_BASIC_RELEASE 605
+#define hV_GUI_BASIC_RELEASE 608
 
 // SDK
 #if defined(ENERGIA) // LaunchPad specific
