@@ -511,98 +511,6 @@ void hV_Screen_Buffer::triangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t 
     }
 }
 
-// Touch functions
-bool hV_Screen_Buffer::isTouch()
-{
-    return (_touchTrim > 0);
-}
-bool hV_Screen_Buffer::isTouchEvent()
-{
-    return _touchEvent;
-}
-
-bool hV_Screen_Buffer::getTouch(uint16_t & x, uint16_t & y, uint16_t & z, uint16_t & t)
-{
-    if (_touchTrim == 0)
-    {
-        return false;
-    }
-
-    uint16_t x0, y0, z0, t0;
-
-    _getRawTouch(x0, y0, z0, t0);
-    z = z0;
-    t = t0;
-
-    if (z > _touchTrim)
-    {
-        x0 = checkRange(x0, _touchXmin, _touchXmax);
-        y0 = checkRange(y0, _touchYmin, _touchYmax);
-
-        switch (_orientation)
-        {
-            case 0: // ok
-
-                x = map(x0, _touchXmin, _touchXmax, 0, _screenWidth);
-                y = map(y0, _touchYmin, _touchYmax, 0, _screenHeigth);
-                break;
-
-            case 1: // ok
-
-                x = map(y0, _touchYmin, _touchYmax, 0, _screenHeigth);
-                y = map(x0, _touchXmin, _touchXmax, _screenWidth, 0);
-                break;
-
-            case 2: // ok
-
-                x = map(x0, _touchXmin, _touchXmax, _screenWidth, 0);
-                y = map(y0, _touchYmin, _touchYmax, _screenHeigth, 0);
-                break;
-
-            case 3: // ok
-
-                x = map(y0, _touchYmin, _touchYmax, _screenHeigth, 0);
-                y = map(x0, _touchXmin, _touchXmax, 0, _screenWidth);
-                break;
-        }
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-bool hV_Screen_Buffer::getTouchInterrupt()
-{
-    return _getInterruptTouch();
-}
-
-// Touch functions
-void hV_Screen_Buffer::clearTouch()
-{
-    uint16_t tx, ty, tz, tt;
-    while (getTouch(tx, ty, tz, tt))
-    // while (getTouchInterrupt())
-    {
-        delay(10);
-    }
-    _touchEvent = TOUCH_EVENT_NONE;
-}
-
-void hV_Screen_Buffer::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t & z0, uint16_t & t0)
-{
-    x0 = 0;
-    y0 = 0;
-    z0 = 0;
-    t0 = 0;
-}
-
-bool hV_Screen_Buffer::_getInterruptTouch()
-{
-    return false;
-}
-
 // Font functions
 void hV_Screen_Buffer::setFontSolid(bool flag)
 {
@@ -823,3 +731,101 @@ void hV_Screen_Buffer::gText(uint16_t x0, uint16_t y0,
 #endif // end MAX_FONT_SIZE > 0
 }
 #endif // FONT_MODE
+
+//
+// Touch section
+//
+bool hV_Screen_Buffer::isTouch()
+{
+    return (_touchTrim > 0);
+}
+bool hV_Screen_Buffer::isTouchEvent()
+{
+    return _touchEvent;
+}
+
+bool hV_Screen_Buffer::getTouch(uint16_t & x, uint16_t & y, uint16_t & z, uint16_t & t)
+{
+    if (_touchTrim == 0)
+    {
+        return false;
+    }
+
+    uint16_t x0, y0, z0, t0;
+
+    _getRawTouch(x0, y0, z0, t0);
+    z = z0;
+    t = t0;
+
+    if (z > _touchTrim)
+    {
+        x0 = checkRange(x0, _touchXmin, _touchXmax);
+        y0 = checkRange(y0, _touchYmin, _touchYmax);
+
+        switch (_orientation)
+        {
+            case 0: // ok
+
+                x = map(x0, _touchXmin, _touchXmax, 0, _screenWidth);
+                y = map(y0, _touchYmin, _touchYmax, 0, _screenHeigth);
+                break;
+
+            case 1: // ok
+
+                x = map(y0, _touchYmin, _touchYmax, 0, _screenHeigth);
+                y = map(x0, _touchXmin, _touchXmax, _screenWidth, 0);
+                break;
+
+            case 2: // ok
+
+                x = map(x0, _touchXmin, _touchXmax, _screenWidth, 0);
+                y = map(y0, _touchYmin, _touchYmax, _screenHeigth, 0);
+                break;
+
+            case 3: // ok
+
+                x = map(y0, _touchYmin, _touchYmax, _screenHeigth, 0);
+                y = map(x0, _touchXmin, _touchXmax, 0, _screenWidth);
+                break;
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool hV_Screen_Buffer::getTouchInterrupt()
+{
+    return _getInterruptTouch();
+}
+
+// Touch functions
+void hV_Screen_Buffer::clearTouch()
+{
+    uint16_t tx, ty, tz, tt;
+    while (getTouch(tx, ty, tz, tt))
+    // while (getTouchInterrupt())
+    {
+        delay(10);
+    }
+    _touchEvent = TOUCH_EVENT_NONE;
+}
+
+void hV_Screen_Buffer::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t & z0, uint16_t & t0)
+{
+    x0 = 0;
+    y0 = 0;
+    z0 = 0;
+    t0 = 0;
+}
+
+bool hV_Screen_Buffer::_getInterruptTouch()
+{
+    return false;
+}
+//
+// End of Touch section
+//
+
