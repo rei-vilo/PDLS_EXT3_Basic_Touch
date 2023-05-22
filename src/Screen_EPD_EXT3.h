@@ -17,8 +17,8 @@
 /// * 3.70"-Touch reference xTP370PGH0x
 ///
 /// @author Rei Vilo
-/// @date 02 May 2023
-/// @version 609
+/// @date 22 May 2023
+/// @version 610
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
@@ -51,7 +51,7 @@
 ///
 /// @brief Library release number
 ///
-#define SCREEN_EPD_EXT3_RELEASE 609
+#define SCREEN_EPD_EXT3_RELEASE 610
 
 // Other libraries
 #include "SPI.h"
@@ -61,6 +61,10 @@
 #if (hV_SCREEN_BUFFER_RELEASE < 523)
 #error Required hV_SCREEN_BUFFER_RELEASE 523
 #endif // hV_SCREEN_BUFFER_RELEASE
+
+#if (TOUCH_MODE != USE_TOUCH_YES)
+#error TOUCH_MODE should be USE_TOUCH_YES
+#endif // TOUCH_MODE
 
 // Objects
 //

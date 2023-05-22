@@ -212,7 +212,7 @@ void Screen_EPD_EXT3_Fast::begin()
     {
         Serial.println("");
         Serial.println(formatString("! Error - Screen %06x non touch", _eScreen_EPD_EXT3));
-    } 
+    }
 
     switch (_codeSize)
     {
@@ -730,6 +730,7 @@ uint8_t Screen_EPD_EXT3_Fast::checkTemperatureMode(uint8_t updateMode)
     // #define FEATURE_OTHER 0x04 ///< With other feature
     // #define FEATURE_WIDE_TEMPERATURE 0x08 ///< With wide operating temperature
     // #define FEATURE_RED 0x10 ///< With red colour
+
     updateMode = UPDATE_FAST;
 
     switch (_codeExtra & 0x19)
@@ -753,7 +754,7 @@ uint8_t Screen_EPD_EXT3_Fast::checkTemperatureMode(uint8_t updateMode)
             break;
 
         default: // CS series
-        
+
             // Normal 	CS 	Global update above 0 °C 	FU: - 	GU: 0 to +50 °C
             updateMode = UPDATE_NONE;
             break;
@@ -768,8 +769,9 @@ uint8_t Screen_EPD_EXT3_Fast::flushMode(uint8_t updateMode)
 
     switch (updateMode)
     {
-        // case UPDATE_GLOBAL:
         case UPDATE_FAST:
+        case UPDATE_PARTIAL:
+        case UPDATE_GLOBAL:
 
             _flushFast();
             break;

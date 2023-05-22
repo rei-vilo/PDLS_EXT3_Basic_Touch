@@ -806,7 +806,7 @@ void hV_Screen_Buffer::clearTouch()
 {
     uint16_t tx, ty, tz, tt;
     while (getTouch(tx, ty, tz, tt))
-    // while (getTouchInterrupt())
+        // while (getTouchInterrupt())
     {
         delay(10);
     }

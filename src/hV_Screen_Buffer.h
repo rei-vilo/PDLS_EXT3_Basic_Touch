@@ -341,6 +341,8 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
                        uint16_t backColour = myColours.white);
     /// @}
 
+#if (TOUCH_MODE != USE_TOUCH_NONE)
+
     /// @name Touch
     /// @note Those functions are optional, and thus defined as empty and not compulsory.
     /// @{
@@ -388,6 +390,8 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
 
     /// @}
 
+#endif // TOUCH_MODE
+
   protected:
     /// @cond
     ///
@@ -418,11 +422,6 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
     virtual void _setPoint(uint16_t x1, uint16_t y1, uint16_t colour) = 0; // compulsory
 
     // Write and Read
-    void _writeData88(uint8_t dataHigh8, uint8_t dataLow8);
-
-    // Touch
-    virtual void _getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t & z0, uint16_t & t0); // compulsory
-    virtual bool _getInterruptTouch(); // compulsory
 
     // Other functions
     // required by triangle()
@@ -452,8 +451,14 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
     uint16_t _screenWidth, _screenHeigth, _screenDiagonal;
     uint8_t _orientation;
     uint16_t _screenColourBits;
-    
+
 #if (TOUCH_MODE != USE_TOUCH_NONE)
+
+    void _writeData88(uint8_t dataHigh8, uint8_t dataLow8);
+
+    // Touch
+    virtual void _getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t & z0, uint16_t & t0); // compulsory
+    virtual bool _getInterruptTouch(); // compulsory
 
     bool _touchEvent;
     uint8_t _touchTrim, _fsmArea;
