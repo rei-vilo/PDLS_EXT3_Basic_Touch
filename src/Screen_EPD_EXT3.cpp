@@ -969,7 +969,7 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
                 t0 = (_touchPrevious != TOUCH_EVENT_NONE) ? TOUCH_EVENT_MOVE : TOUCH_EVENT_PRESS;
 
                 // Keep position for next release
-                _touchPrevious = true;
+                _touchPrevious = TOUCH_EVENT_PRESS;
                 _touchX = x0;
                 _touchY = y0;
                 z0 = 0x16;
