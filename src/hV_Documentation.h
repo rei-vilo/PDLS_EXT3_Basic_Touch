@@ -41,8 +41,8 @@
 /// Additionally, the **[Wiki](https://docs.pervasivedisplays.com/)** provides a gradual introduction to the e-paper technology and how to use it.
 ///
 /// @author Rei Vilo
-/// @date 21 Jun 2023
-/// @version 611
+/// @date 21 Jul 2023
+/// @version 612
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
 /// @copyright All rights reserved
@@ -65,7 +65,7 @@
 ///
 /// @page Examples Examples
 ///
-/// Examples are under the examples folder.
+/// Examples are under the examples folders.
 ///
 /// * Common
 ///     * Common_Colours
@@ -91,6 +91,14 @@
 /// @image latex Global.jpeg width=10cm
 ///     * Example_Fast_Speed
 /// @image html Fast.jpeg
+/// + Fast
 /// @image latex Fast.jpeg width=10cm
+/// + Black-White-Red-Yellow
+///     * BWRY_Colours
+/// @image html BWRY_Colours.png
+/// @image latex BWRY_Colours.png width=10cm
+///     * BWRY_Palette
+/// @image html BWRY_Palette.png
+/// @image latex BWRY_Palette.png width=10cm
 ///
 

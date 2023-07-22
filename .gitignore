@@ -5,6 +5,8 @@ latex/
 xml/
 Doxyfile.dox
 footer.html
+img/
 .github/
 *.ctu-info
 *.dump
+doxygen-awesome-css/
