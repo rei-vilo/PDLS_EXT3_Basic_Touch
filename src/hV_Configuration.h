@@ -19,8 +19,8 @@
 /// * 11. Set storage mode, not implemented
 ///
 /// @author Rei Vilo
-/// @date 21 Jul 2023
-/// @version 612
+/// @date 21 Aug 2023
+/// @version 613
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
 /// @copyright All rights reserved
@@ -56,7 +56,7 @@
 ///
 /// @brief Release
 ///
-#define hV_CONFIGURATION_RELEASE 612
+#define hV_CONFIGURATION_RELEASE 613
 
 ///
 /// @name 1- List of supported Pervasive Displays screens
@@ -341,8 +341,8 @@ const pins_t boardMSP430FR5994 =
     .panelCS = 19, ///< EXT3 and EXT3-1 pin 9 Grey
     .panelCSS = 39, ///< EXT3 and EXT3-1 pin 12 Grey2
     .flashCSS = 38, ///< EXT3 pin 20 or EXT3-1 pin 11 Black2
-    .touchInt = NOT_CONNECTED, ///< EXT3-Touch pin 3 Red
-    .touchReset = NOT_CONNECTED, ///< EXT3-Touch pin 4 Orange
+    .touchInt = 8, ///< EXT3-Touch pin 3 Red
+    .touchReset = 6, ///< EXT3-Touch pin 4 Orange
     .panelPower = NOT_CONNECTED, ///< Optional power circuit
     .cardCS = 47, ///< Included SD-card
     .cardDetect = 51 ///< Included SD-card
@@ -538,8 +538,8 @@ const pins_t boardESP32PicoDevKitM2 =
     .panelCS = 27, ///< EXT3 and EXT3-1 pin 9 Grey -> GPIO27
     .panelCSS = NOT_CONNECTED, ///< EXT3 and EXT3-1 pin 12 Grey2 -> GPIO33
     .flashCSS = NOT_CONNECTED, ///< EXT3 pin 20 or EXT3-1 pin 11 Black2 -> GPIO27
-    .touchInt = 19, ///< EXT3-Touch pin 3 Orange -> GPIO19
-    .touchReset = 8, ///< EXT3-Touch pin 4 Red -> GPIO8
+    .touchInt = 19, ///< EXT3-Touch pin 3 Red -> GPIO19
+    .touchReset = 8, ///< EXT3-Touch pin 4 Orange -> GPIO8
     .panelPower = NOT_CONNECTED, ///< Optional power circuit
     .cardCS = NOT_CONNECTED, ///< Separate SD-card board
     .cardDetect = NOT_CONNECTED, ///< Separate SD-card board
@@ -558,8 +558,8 @@ const pins_t boardXiaoRP2040
     .panelCS = 29, ///< EXT3 and EXT3-1 pin 9 Grey -> D3 GPIO29
     .panelCSS = 7, ///< EXT3 and EXT3-1 pin 12 Grey2 -> D5 GPIO7
     .flashCSS = NOT_CONNECTED, ///< EXT3 pin 20 or EXT3-1 pin 11 Black2 -> N/A
-    .touchInt = NOT_CONNECTED, ///< EXT3-Touch pin 3 Orange -> D6 GPIO0
-    .touchReset = NOT_CONNECTED, ///< EXT3-Touch pin 4 Red -> D7 GPIO1
+    .touchInt = NOT_CONNECTED, ///< EXT3-Touch pin 3 Red -> D6 GPIO0
+    .touchReset = NOT_CONNECTED, ///< EXT3-Touch pin 4 Orange -> D7 GPIO1
     .panelPower = NOT_CONNECTED, ///< Optional power circuit
     .cardCS = NOT_CONNECTED, ///< Separate SD-card board
     .cardDetect = NOT_CONNECTED, ///< Separate SD-card board
@@ -577,8 +577,8 @@ const pins_t boardTeensy3x =
     .panelCS = 18, ///< EXT3 and EXT3-1 pin 9 Grey
     .panelCSS = NOT_CONNECTED, ///< EXT3 and EXT3-1 pin 12 Grey2
     .flashCSS = NOT_CONNECTED, ///< EXT3 and EXT3-1 pin 20 Black2
-    .touchInt = NOT_CONNECTED, ///< EXT3-Touch pin 3 Orange
-    .touchReset = NOT_CONNECTED, ///< EXT3-Touch pin 4 Red
+    .touchInt = NOT_CONNECTED, ///< EXT3-Touch pin 3 Red
+    .touchReset = NOT_CONNECTED, ///< EXT3-Touch pin 4 Orange
     .panelPower = NOT_CONNECTED, ///< Optional power circuit
     .cardCS = NOT_CONNECTED, ///< Separate SD-card board
     .cardDetect = NOT_CONNECTED, ///< Separate SD-card board

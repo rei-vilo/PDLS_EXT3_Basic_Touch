@@ -948,7 +948,7 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
         t0 = TOUCH_EVENT_NONE;
 
         // Only one finger read
-        if (flagInterrupt)
+        if (flagInterrupt) // touch
         {
             uint8_t bufferWrite[1];
             uint8_t bufferRead[3 + 6];
@@ -980,19 +980,21 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
                 t0 = TOUCH_EVENT_RELEASE;
             }
         }
-        else if (_touchPrevious != TOUCH_EVENT_NONE)
+        else // no touch
         {
-            // Take previous position for release
-            _touchPrevious = TOUCH_EVENT_NONE;
-            t0 = TOUCH_EVENT_RELEASE;
-            x0 = _touchX;
-            y0 = _touchY;
-            z0 = 0x16;
-        }
-        else if (_touchPrevious == TOUCH_EVENT_NONE)
-        {
-            t0 = TOUCH_EVENT_NONE;
-            z0 = 0;
+            if (_touchPrevious == TOUCH_EVENT_NONE)
+            {
+                t0 = TOUCH_EVENT_NONE;
+                z0 = 0;
+            }
+            else // Take previous position for release
+            {
+                _touchPrevious = TOUCH_EVENT_NONE;
+                t0 = TOUCH_EVENT_RELEASE;
+                x0 = _touchX;
+                y0 = _touchY;
+                z0 = 0x16;
+            }
         }
     } // _codeSize
 }
