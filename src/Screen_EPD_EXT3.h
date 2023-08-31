@@ -17,8 +17,8 @@
 /// * 3.70"-Touch reference xTP370PGH0x
 ///
 /// @author Rei Vilo
-/// @date 21 Jul 2023
-/// @version 612
+/// @date 31 Aug 2023
+/// @version 614
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
@@ -51,7 +51,7 @@
 ///
 /// @brief Library release number
 ///
-#define SCREEN_EPD_EXT3_RELEASE 612
+#define SCREEN_EPD_EXT3_RELEASE 614
 
 // Other libraries
 #include "SPI.h"
