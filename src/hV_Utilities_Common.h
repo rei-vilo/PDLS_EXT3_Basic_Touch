@@ -1,13 +1,13 @@
 ///
-/// @file hV_Utilities.h
+/// @file hV_Utilities_Common.h
 /// @brief Utilities for highView Library Suite
 ///
 /// @details Project Pervasive Displays Library Suite
 /// @n Based on highView technology
 ///
 /// @author Rei Vilo
-/// @date 21 Sep 2023
-/// @version 700
+/// @date 21 Oct 2023
+/// @version 701
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
@@ -29,7 +29,7 @@
 ///
 /// @brief Library release number
 ///
-#define hV_UTILITIES_RELEASE 700
+#define hV_UTILITIES_RELEASE 701
 
 #ifndef min
 #define min(a, b) ((a) < (b) ? (a) : (b))

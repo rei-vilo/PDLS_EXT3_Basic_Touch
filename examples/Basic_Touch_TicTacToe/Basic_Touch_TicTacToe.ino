@@ -15,12 +15,15 @@
 /// @n
 ///
 
+// Screen
+#include "PDLS_EXT3_Basic_Touch.h"
+
 // SDK
-#if defined(ENERGIA) // LaunchPad specific
-#include "Energia.h"
-#else // Arduino general
-#include "Arduino.h"
-#endif // SDK
+// #include <Arduino.h>
+#include "hV_HAL_Peripherals.h"
+
+// Configuration
+#include "hV_Configuration.h"
 
 // Set parameters
 #define PLAYER_NONE 0
@@ -30,8 +33,8 @@
 #define NUMBER 4
 
 // Include application, user and local libraries
-#include "Wire.h"
-#include "SPI.h"
+// #include <Wire.h>
+// #include <SPI.h>
 
 // Define structures and classes
 
@@ -39,8 +42,6 @@
 
 // === Pervasive Displays iTC
 // --- Touch
-#include "PDLS_EXT3_Basic_Touch.h"
-
 // Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_271_09_Touch, boardRaspberryPiPico_RP2040);
 Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_370_0C_Touch, boardRaspberryPiPico_RP2040);
 
