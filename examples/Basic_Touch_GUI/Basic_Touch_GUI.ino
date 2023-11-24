@@ -9,28 +9,28 @@
 /// @version 605
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
-/// @copyright CC = BY SA NC
+/// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 ///
 /// @see ReadMe.txt for references
 /// @n
 ///
 
-// Screen 
+// Screen
 #include "PDLS_EXT3_Basic_Touch.h"
 
 // SDK
 // #include <Arduino.h>
 #include "hV_HAL_Peripherals.h"
 
+// Include application, user and local libraries
+// #include <Wire.h>
+// #include <SPI.h>
+
 // Configuration
 #include "hV_Configuration.h"
 
 // Set parameters
 #define DISPLAY_GUI 1
-
-// Include application, user and local libraries
-// #include <Wire.h>
-// #include <SPI.h>
 
 #if (SCREEN_EPD_EXT3_RELEASE < 531)
 #error Required SCREEN_EPD_EXT3_RELEASE 531
@@ -137,8 +137,12 @@ void displayGUI()
 #endif // DISPLAY_GUI
 
 // Add setup code
+///
+/// @brief Setup
+///
 void setup()
 {
+    // Start
     Serial.begin(115200);
     delay(500);
     Serial.println();
@@ -148,7 +152,7 @@ void setup()
 
     Serial.print("begin... ");
     myScreen.begin();
-    Serial.println(formatString("%s %ix%i", myScreen.WhoAmI().c_str(), myScreen.screenSizeX(), myScreen.screenSizeY()));
+    Serial.println(myScreen.WhoAmI());
 
     myScreen.regenerate();
 
@@ -159,12 +163,11 @@ void setup()
     Serial.println("DISPLAY_GUI... ");
     myScreen.clear();
     displayGUI();
-    Serial.println(". done");
-
-    // wait(4);
+    wait(4);
 
 #endif // DISPLAY_GUI
 
+    Serial.println("White... ");
     myScreen.regenerate();
 
     Serial.println("=== ");
@@ -172,6 +175,9 @@ void setup()
 }
 
 // Add loop code
+///
+/// @brief Loop, empty
+///
 void loop()
 {
     delay(1000);

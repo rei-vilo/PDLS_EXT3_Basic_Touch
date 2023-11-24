@@ -9,7 +9,7 @@
 /// @version 607
 ///
 /// @copyright (c) Rei Vilo, 2010-2023
-/// @copyright CC = BY SA NC
+/// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 ///
 /// @see ReadMe.txt for references
 /// @n
@@ -22,15 +22,15 @@
 // #include <Arduino.h>
 #include "hV_HAL_Peripherals.h"
 
+// Include application, user and local libraries
+// #include <Wire.h>
+// #include <SPI.h>
+
 // Configuration
 #include "hV_Configuration.h"
 
 // Set parameters
 #define DISPLAY_TOUCH 1
-
-// Include application, user and local libraries
-// #include <Wire.h>
-// #include <SPI.h>
 
 // Define structures and classes
 
@@ -127,32 +127,27 @@ void setup()
     // Start
     Serial.begin(115200);
     delay(500);
-    Serial.println("");
-    Serial.println("");
-    Serial.println("");
+    Serial.println();
     Serial.println("=== " __FILE__);
     Serial.println("=== " __DATE__ " " __TIME__);
-    Serial.println("");
+    Serial.println();
 
     Serial.print("begin... ");
     myScreen.begin();
-    Serial.println(" done");
+    Serial.println(myScreen.WhoAmI());
 
     myScreen.regenerate();
 
-    Serial.println(myScreen.WhoAmI());
-
 #if (DISPLAY_TOUCH == 1)
 
-    Serial.print("DISPLAY_TOUCH... ");
+    Serial.println("DISPLAY_TOUCH... ");
     myScreen.clear();
     displayTouch();
-    Serial.println("done");
-
     wait(4);
 
 #endif // DISPLAY_TOUCH
 
+    Serial.println("White... ");
     myScreen.regenerate();
 
     Serial.println("=== ");
