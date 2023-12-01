@@ -9,8 +9,4 @@ img/
 .github/
 *.ctu-info
 *.dump
-<<<<<<< Updated upstream
 doxygen-awesome-css/
-=======
-doxygen-awesome-css/
->>>>>>> Stashed changes

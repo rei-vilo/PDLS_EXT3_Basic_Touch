@@ -96,7 +96,6 @@
 /// @image latex Global.jpeg width=8cm
 ///     * Example_Fast_Speed.ino
 /// @image html Fast.jpeg
-<<<<<<< Updated upstream
 /// @image latex Fast.jpeg width=8cm
 ///
 /// + Black-White-Red-Yellow
@@ -109,7 +108,7 @@
 ///     * BWRY_Contrasts.ino
 /// @image html BWRY_Contrasts.jpg
 /// @image latex BWRY_Contrasts.jpg width=8cm
-=======
+///
 /// + Fast
 /// @image latex Fast.jpeg width=10cm
 /// + Black-White-Red-Yellow
@@ -119,6 +118,5 @@
 ///     * BWRY_Palette
 /// @image html BWRY_Palette.png
 /// @image latex BWRY_Palette.png width=10cm
->>>>>>> Stashed changes
 ///
 
