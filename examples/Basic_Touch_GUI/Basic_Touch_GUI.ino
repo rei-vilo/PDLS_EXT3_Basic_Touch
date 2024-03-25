@@ -5,11 +5,12 @@
 /// @details Library for Pervasive Displays EXT3 - Basic edition
 ///
 /// @author Rei Vilo
-/// @date 25 Jan 2023
-/// @version 605
+/// @date 21 Mar 2024
+/// @version 801
 ///
-/// @copyright (c) Rei Vilo, 2010-2023
+/// @copyright (c) Rei Vilo, 2010-2024
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+/// @copyright For exclusive use with Pervasive Displays screens
 ///
 /// @see ReadMe.txt for references
 /// @n
@@ -32,21 +33,23 @@
 // Set parameters
 #define DISPLAY_GUI 1
 
-#if (SCREEN_EPD_EXT3_RELEASE < 531)
-#error Required SCREEN_EPD_EXT3_RELEASE 531
+#if (SCREEN_EPD_EXT3_RELEASE < 801)
+#error Required SCREEN_EPD_EXT3_RELEASE 801
 #endif SCREEN_EPD_EXT3_RELEASE
 
 #include "hV_GUI.h"
 
-#if (hV_GUI_BASIC_RELEASE < 605)
-#error Required hV_GUI_BASIC_RELEASE 605
+#if (hV_GUI_BASIC_RELEASE < 801)
+#error Required hV_GUI_BASIC_RELEASE 801
 #endif hV_GUI_BASIC_RELEASE
 
 // Define structures and classes
 
 // Define variables and constants
-// Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_271_09_Touch, boardRaspberryPiPico_RP2040);
-Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_370_0C_Touch, boardRaspberryPiPico_RP2040);
+
+// --- Touch
+// Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_271_KS_09_Touch, boardRaspberryPiPico_RP2040);
+Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_370_PS_0C_Touch, boardRaspberryPiPico_RP2040);
 
 uint8_t fontText;
 
@@ -61,10 +64,10 @@ void wait(uint8_t second)
 {
     for (uint8_t i = second; i > 0; i--)
     {
-        Serial.print(formatString(" > %i  \r", i));
+        mySerial.print(formatString(" > %i  \r", i));
         delay(1000);
     }
-    Serial.print("         \r");
+    mySerial.print("         \r");
 }
 
 #if (DISPLAY_GUI == 1)
@@ -116,7 +119,7 @@ void displayGUI()
                 k -= 1;
                 chrono32 = millis() - chrono32;
                 myText.draw(formatString("%s in %i ms (%i left)", "Normal", chrono32, k));
-                Serial.println(formatString("%3i: %s in %i ms", k, "Normal", chrono32));
+                mySerial.println(formatString("%3i: %s in %i ms", k, "Normal", chrono32));
             }
 
             chrono32 = millis();
@@ -125,7 +128,7 @@ void displayGUI()
                 k -= 1;
                 chrono32 = millis() - chrono32;
                 myText.draw(formatString("%s in %i ms (%i left)", "Instant", chrono32, k));
-                Serial.println(formatString("%3i: %s in %i ms", k, "Instant", chrono32));
+                mySerial.println(formatString("%3i: %s in %i ms", k, "Instant", chrono32));
             }
         } // getTouchInterrupt
 
@@ -143,16 +146,17 @@ void displayGUI()
 void setup()
 {
     // Start
-    Serial.begin(115200);
+    // mySerial = Serial by default, otherwise edit hV_HAL_Peripherals.h
+    mySerial.begin(115200);
     delay(500);
-    Serial.println();
-    Serial.println("=== " __FILE__);
-    Serial.println("=== " __DATE__ " " __TIME__);
-    Serial.println();
+    mySerial.println();
+    mySerial.println("=== " __FILE__);
+    mySerial.println("=== " __DATE__ " " __TIME__);
+    mySerial.println();
 
-    Serial.print("begin... ");
+    mySerial.print("begin... ");
     myScreen.begin();
-    Serial.println(myScreen.WhoAmI());
+    mySerial.println(myScreen.WhoAmI());
 
     myScreen.regenerate();
 
@@ -160,18 +164,18 @@ void setup()
 
 #if (DISPLAY_GUI == 1)
 
-    Serial.println("DISPLAY_GUI... ");
+    mySerial.println("DISPLAY_GUI... ");
     myScreen.clear();
     displayGUI();
     wait(4);
 
 #endif // DISPLAY_GUI
 
-    Serial.println("White... ");
+    mySerial.println("White... ");
     myScreen.regenerate();
 
-    Serial.println("=== ");
-    Serial.println();
+    mySerial.println("=== ");
+    mySerial.println();
 }
 
 // Add loop code

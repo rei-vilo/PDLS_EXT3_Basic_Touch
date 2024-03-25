@@ -8,8 +8,10 @@
 //
 // Created by Rei Vilo, 28 Jun 2016
 //
-// Copyright (c) Rei Vilo, 2010-2023
+// Copyright (c) Rei Vilo, 2010-2024
 // Licence Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+// For exclusive use with Pervasive Displays screens
+// Portions (c) Pervasive Displays, 2010-2024
 //
 // Release 509: Added eScreen_EPD_EXT3_271_Fast
 // Release 527: Added support for ESP32 PSRAM
@@ -27,135 +29,309 @@
 // Release 610: Removed partial update
 // Release 700: Refactored screen and board functions
 // Release 701: Improved functions names consistency
+// Release 800: Read OTP memory
+// Release 801: Improved OTP implementation
 //
 
 // Library header
 #include "Screen_EPD_EXT3.h"
 
-#if defined(ENERGIA)
-///
-/// @brief Proxy for SPISettings
-/// @details Not implemented in Energia
-/// @see https://www.arduino.cc/en/Reference/SPISettings
-///
-struct _SPISettings_s
-{
-    uint32_t clock; ///< in Hz, checked against SPI_CLOCK_MAX = 16000000
-    uint8_t bitOrder; ///< LSBFIRST, MSBFIRST
-    uint8_t dataMode; ///< SPI_MODE0, SPI_MODE1, SPI_MODE2, SPI_MODE3
-};
-///
-/// @brief SPI settings for screen
-///
-_SPISettings_s _settingScreen;
-#else
-///
-/// @brief SPI settings for screen
-///
-SPISettings _settingScreen;
-#endif // ENERGIA
-
-#ifndef SPI_CLOCK_MAX
-#define SPI_CLOCK_MAX 16000000
-#endif
+#define DEBUG_OTP 1
 
 //
 // === COG section
 //
 /// @cond
+/// @see
+/// * ApplicationNote_smallSize_fast-update_v02_20220907
+/// * ApplicationNote_Small_Size_wide-Temperature_EPD_v03_20231031_B
+/// * ApplicationNote_Small_Size_wide-Temperature_EPD_v01_20231225_A
+//
 
 //
-// === List of touch ICs
+// === Touch section
 //
+// List of touch ICs
 #define TOUCH_271_ADDRESS 0x41
 #define TOUCH_370_ADDRESS 0x38
+//
+// === End of Touch section
+//
 
-// Common settings
-// 0x00, soft-reset, temperature, active temperature, PSR0, PSR1
-uint8_t indexE5_data[] = {0x19}; // Temperature 0x19 = 25 °C
-uint8_t indexE0_data[] = {0x02}; // Activate temperature
-uint8_t index00_data[] = {0xff, 0x8f}; // PSR, constant
-uint8_t index50a_data[] = {0x27}; // Only 154 213 266 and 370 screens, constant
-uint8_t index50b_data[] = {0x07}; // Only 154 213 266 and 370 screens, constant
-uint8_t index50c_data[] = {0x07}; // All screens, constant
-
-void Screen_EPD_EXT3_Fast::COG_initial(uint8_t updateMode)
+void Screen_EPD_EXT3_Fast::COG_reset()
 {
-    // Work settings
-    uint8_t indexE0_work[1]; // Activate temperature
-    uint8_t indexE5_work[1]; // Temperature
-    uint8_t index00_work[2]; // PSR
-
-    indexE0_work[0] = indexE0_data[0];
-    indexE5_data[0] = u_temperature;
-    if ((u_codeExtra & FEATURE_FAST) and (updateMode != UPDATE_GLOBAL)) // Specific settings for fast update
+    // Application note § 2. Power on COG driver
+    switch (u_codeSize)
     {
-        indexE5_work[0] = indexE5_data[0] | 0x40; // temperature | 0x40
-        index00_work[0] = index00_data[0] | 0x10; // PSR0 | 0x10
-        index00_work[1] = index00_data[1] | 0x02; // PSR1 | 0x02
-    }
-    else // Common settings
-    {
-        indexE5_work[0] = indexE5_data[0]; // Temperature
-        index00_work[0] = index00_data[0]; // PSR0
-        index00_work[1] = index00_data[1]; // PSR1
-    } // u_codeExtra updateMode
+        case SIZE_565: // 5.65"
+        case SIZE_581: // 5.81"
+        case SIZE_741: // 7.41"
 
-    // New algorithm
-    uint8_t index00_reset[] = {0x0e};
-    b_sendIndexData(0x00, index00_reset, 1); // Soft-reset
-    b_waitBusy();
-
-    b_sendIndexData(0xe5, indexE5_work, 1); // Input Temperature
-    b_sendIndexData(0xe0, indexE0_work, 1); // Activate Temperature
-    b_sendIndexData(0x00, index00_work, 2); // PSR
-
-    // Specific settings for fast update, all screens
-    if ((u_codeExtra & FEATURE_FAST) and (updateMode != UPDATE_GLOBAL))
-    {
-        uint8_t index50c_work[1]; // Vcom
-        index50c_work[0] = index50c_data[0]; // 0x07
-        b_sendIndexData(0x50, index50c_work, 1); // Vcom and data interval setting
-    }
-
-    // Additional settings for fast update, 154 213 266 and 370 screens (_flag50)
-    if ((u_codeExtra & FEATURE_FAST) and (updateMode != UPDATE_GLOBAL) and _flag50)
-    {
-        uint8_t index50a_work[1]; // Vcom
-        index50a_work[0] = index50a_data[0]; // 0x27
-        b_sendIndexData(0x50, index50a_work, 1); // Vcom and data interval setting
-    }
-}
-
-void Screen_EPD_EXT3_Fast::COG_getUserData()
-{
-    uint16_t u_codeSizeType = u_eScreen_EPD_EXT3 & 0xffff;
-
-    // Size cSize cType Driver
-    switch (u_codeSizeType)
-    {
-        case 0x2709: // 2.71” = 0xcf, 0x8d
-
-            index00_data[0] = 0xcf;
-            index00_data[1] = 0x8d;
-            _flag50 = false;
+            b_reset(200, 20, 200, 50, 5); // medium
             break;
 
-        case 0x370C: // 3.70” = 0xcf, 0x0f
+        case SIZE_969: // 9.69"
+        case SIZE_1198: // 11.98"
 
-            index00_data[0] = 0xcf;
-            index00_data[1] = 0x8f;
-            _flag50 = true;
+            b_reset(200, 20, 200, 200, 5); // large
             break;
 
         default:
 
+            b_reset(5, 5, 10, 5, 5); // small
+            break;
+    } // u_codeSize
+}
+
+void Screen_EPD_EXT3_Fast::COG_initial(uint8_t updateMode)
+{
+    // Application note § 4. Input initial command
+
+    // Work settings
+    uint8_t indexE5_work; // Temperature
+    uint8_t index00_work[2]; // PSR
+
+    // FILM_P and FILM_K already checked
+    if (updateMode != UPDATE_GLOBAL) // Specific settings for fast update
+    {
+        indexE5_work = u_temperature | 0x40; // temperature | 0x40
+        index00_work[0] = COG_initialData[0] | 0x10; // PSR0 | 0x10
+        index00_work[1] = COG_initialData[1] | 0x02; // PSR1 | 0x02
+    }
+    else // Common settings
+    {
+        indexE5_work = u_temperature; // Temperature
+        index00_work[0] = COG_initialData[0]; // PSR0
+        index00_work[1] = COG_initialData[1]; // PSR1
+    } // u_codeExtra updateMode
+
+    // New algorithm
+    b_sendCommandData8(0x00, 0x0e); // Soft-reset
+    b_waitBusy();
+
+    b_sendCommandData8(0xe5, indexE5_work); // Input Temperature
+    b_sendCommandData8(0xe0, 0x02); // Activate Temperature
+
+    if (u_codeSize == SIZE_290) // No PSR
+    {
+        b_sendCommandData8(0x4d, 0x55);
+        b_sendCommandData8(0xe9, 0x02);
+    }
+    else
+    {
+        b_sendIndexData(0x00, index00_work, 2); // PSR
+    }
+
+    // Specific settings for fast update, all screens
+    // FILM_P and FILM_K already checked
+    if (updateMode != UPDATE_GLOBAL)
+    {
+        b_sendCommandData8(0x50, 0x07); // Vcom and data interval setting
+    }
+
+    // Additional settings for fast update, 154 213 266 and 370 screens (s_flag50)
+    // FILM_P and FILM_K already checked
+    if ((updateMode != UPDATE_GLOBAL) and s_flag50)
+    {
+        b_sendCommandData8(0x50, 0x27); // Vcom and data interval setting
+
+    }
+}
+
+void Screen_EPD_EXT3_Fast::COG_getDataOTP()
+{
+#if defined(ARDUINO_FEATHER_ESP32)
+
+    hV_HAL_SPI3_define(SCK, MOSI) // SCK SDA
+
+#elif defined(ARDUINO_XIAO_ESP32C3)
+
+    // Board Xiao ESP32-C3 crashes if pins are not specified.
+    hV_HAL_SPI3_define(8, 9) // SCK SDA
+
+#elif defined(ARDUINO_NANO_ESP32)
+
+    // Board Arduino Nano ESP32 arduino_nano_nora v2.0.11
+    hV_HAL_SPI3_define(SCK, MOSI) // SCK SDA
+
+#elif defined(ARDUINO_ARCH_ESP32)
+
+    // void begin(int8_t sck=-1, int8_t miso=-1, int8_t mosi=-1, int8_t ss=-1);
+    // Board ESP32-Pico-DevKitM-2 crashes if pins are not specified.
+    hV_HAL_SPI3_define(14, 12) // SCK SDA
+
+#else
+
+    hV_HAL_SPI3_define(SCK, MOSI); // SCK SDA
+
+#endif // ARDUINO
+
+    // Application note § 3. Read OTP memory
+    // Register 0x50 flag
+    // Additional settings for fast update, 154 206 213 266 271A 370 and 437 screens (s_flag50)
+    switch (u_eScreen_EPD)
+    {
+        case eScreen_EPD_154_PS_0C:
+        case eScreen_EPD_154_KS_0C:
+        case eScreen_EPD_206_KS_0E:
+        case eScreen_EPD_213_PS_0E:
+        case eScreen_EPD_213_KS_0E:
+        case eScreen_EPD_266_PS_0C:
+        case eScreen_EPD_266_KS_0C:
+        case eScreen_EPD_271_KS_0C: // 2.71(A)
+        case eScreen_EPD_370_PS_0C:
+        case eScreen_EPD_370_PS_0C_Touch:
+        case eScreen_EPD_370_KS_0C:
+        case eScreen_EPD_437_PS_0C:
+        case eScreen_EPD_437_KS_0C:
+
+            s_flag50 = true;
+            break;
+
+        default:
+
+            s_flag50 = false;
             break;
     }
+
+    // Screens with no OTP
+    if ((u_eScreen_EPD == eScreen_EPD_290_KS_0F) or (u_eScreen_EPD == eScreen_EPD_150_KS_0J) or (u_eScreen_EPD == eScreen_EPD_152_KS_0J))
+    {
+        u_flagOTP = true;
+        return; // No PSR
+    }
+
+    // GPIO
+    COG_reset(); // Although not mentioned, reset to ensure stable state
+
+    // Read OTP
+    uint8_t ui8 = 0;
+    uint16_t offsetA5 = 0x0000;
+    uint16_t offsetPSR = 0x0000;
+    uint16_t u_readBytes = 2;
+
+    digitalWrite(b_pin.panelDC, LOW); // Command
+    digitalWrite(b_pin.panelCS, LOW); // Select
+    hV_HAL_SPI3_write(0xa2);
+    digitalWrite(b_pin.panelCS, HIGH); // Unselect
+    delay(10);
+
+    digitalWrite(b_pin.panelDC, HIGH); // Data
+    digitalWrite(b_pin.panelCS, LOW); // Select
+    ui8 = hV_HAL_SPI3_read(); // Dummy
+    digitalWrite(b_pin.panelCS, HIGH); // Unselect
+    // hV_HAL_log(LEVEL_DEBUG, "Dummy read 0x%02x", ui8);
+
+    digitalWrite(b_pin.panelCS, LOW); // Select
+    ui8 = hV_HAL_SPI3_read(); // First byte to be checked
+    digitalWrite(b_pin.panelCS, HIGH); // Unselect
+    // hV_HAL_log(LEVEL_INFO, "ui8= 0x%02x", ui8);
+
+    // Check bank
+    uint8_t bank = ((ui8 == 0xa5) ? 0 : 1);
+
+    switch (u_eScreen_EPD)
+    {
+        case eScreen_EPD_271_KS_09_Touch:
+        case eScreen_EPD_271_PS_09_Touch:
+
+            offsetPSR = (bank == 0) ? 0x004b : 0x004b;
+            offsetA5 = (bank == 0) ? 0x0000 : 0x0000;
+
+            break;
+
+        case eScreen_EPD_370_PS_0C_Touch:
+
+            offsetPSR = (bank == 0) ? 0x0fb4 : 0x1fb4;
+            offsetA5 = (bank == 0) ? 0x0000 : 0x1000;
+
+            break;
+
+        default:
+
+            mySerial.println(formatString("hV * OTP check failed - Screen %i-%cS-0%c not supported", u_codeSize, u_codeFilm, u_codeDriver));
+            mySerial.flush();
+            while (true);
+            break;
+    }
+
+    // Check second bank
+    if (offsetA5 > 0x0000)
+    {
+        for (uint16_t index = 1; index < offsetA5; index += 1)
+        {
+            digitalWrite(b_pin.panelCS, LOW); // Select
+            ui8 = hV_HAL_SPI3_read();
+            digitalWrite(b_pin.panelCS, HIGH); // Unselect
+        }
+
+        digitalWrite(b_pin.panelCS, LOW); // Select
+        ui8 = hV_HAL_SPI3_read(); // First byte to be checked
+        digitalWrite(b_pin.panelCS, HIGH); // Unselect
+
+        if (ui8 != 0xa5)
+        {
+            mySerial.println();
+            mySerial.println(formatString("hV * OTP check failed - Bank %i, first 0x%02x, expected 0x%02x", bank, ui8, 0xa5));
+            mySerial.flush();
+            while (true);
+        }
+    }
+
+    mySerial.println(formatString("hV . OTP check passed - Bank %i, first 0x%02x as expected", bank, ui8));
+
+    // Ignore bytes 1..offsetPSR
+    for (uint16_t index = offsetA5 + 1; index < offsetPSR; index += 1)
+    {
+        digitalWrite(b_pin.panelCS, LOW); // Select
+        ui8 = hV_HAL_SPI3_read();
+        digitalWrite(b_pin.panelCS, HIGH); // Unselect
+    }
+
+    // Populate COG_initialData
+    for (uint16_t index = 0; index < u_readBytes; index += 1)
+    {
+        digitalWrite(b_pin.panelCS, LOW); // Select
+        ui8 = hV_HAL_SPI3_read(); // Read OTP
+        COG_initialData[index] = ui8;
+        digitalWrite(b_pin.panelCS, HIGH); // Unselect
+    }
+
+    u_flagOTP = true;
+
+    // Debug COG_initialData
+#if (DEBUG_OTP == 1)
+    uint8_t debugIndex = u_readBytes;
+
+    mySerial.print(formatString("const uint8_t COG_initialData[%i] =", debugIndex));
+    mySerial.println();
+    mySerial.print("{");
+    for (uint16_t index = 0; index < debugIndex; index += 1)
+    {
+        if ((index % 8) == 0)
+        {
+            mySerial.println();
+            mySerial.print("   ");
+        }
+
+        mySerial.print(formatString("0x%02x", COG_initialData[index]));
+        mySerial.print(formatString("%s ", (index + 1 < debugIndex ? "," : " "))); // no comma on last value
+
+        if (((index + 1) % 8) == 0)
+        {
+            mySerial.print(formatString(" // 0x%04x..%04x", index - 7, index));
+        }
+    }
+    mySerial.println();
+
+    mySerial.print(formatString("} // %i", debugIndex));
+    mySerial.println();
+#endif // DEBUG_OTP
 }
 
 void Screen_EPD_EXT3_Fast::COG_sendImageDataFast()
 {
+    // Application note § 5. Input image to the EPD
     uint8_t * nextBuffer = u_newImage;
     uint8_t * previousBuffer = u_newImage + u_pageColourSize;
 
@@ -166,12 +342,12 @@ void Screen_EPD_EXT3_Fast::COG_sendImageDataFast()
 
 void Screen_EPD_EXT3_Fast::COG_update(uint8_t updateMode)
 {
-    // Specific settings for fast update, 154 213 266 and 370 screens (_flag50)
-    if ((u_codeExtra & FEATURE_FAST) and (updateMode != UPDATE_GLOBAL) and _flag50)
+    // Application note § 6. Send updating command
+    // Specific settings for fast update, 154 206 213 266 271A 370 and 437 screens (s_flag50)
+    // FILM_P and FILM_K already checked
+    if ((updateMode != UPDATE_GLOBAL) and s_flag50)
     {
-        uint8_t index50b_work[1]; // Vcom
-        index50b_work[0] = index50b_data[0]; // 0x07
-        b_sendIndexData(0x50, index50b_work, 1); // Vcom and data interval setting
+        b_sendCommandData8(0x50, 0x07); // Vcom and data interval setting
     }
 
     b_sendCommand8(0x04); // Power on
@@ -185,8 +361,9 @@ void Screen_EPD_EXT3_Fast::COG_update(uint8_t updateMode)
 
 void Screen_EPD_EXT3_Fast::COG_powerOff()
 {
+    // Application note § 7. Turn-off DC/DC
     b_sendCommand8(0x02); // Turn off DC/DC
-    digitalWrite(b_pin.panelCS, HIGH); // CS# = 1
+    digitalWrite(b_pin.panelCS, HIGH); // Unselect
     b_waitBusy();
 }
 /// @endcond
@@ -197,59 +374,103 @@ void Screen_EPD_EXT3_Fast::COG_powerOff()
 //
 // === Class section
 //
-Screen_EPD_EXT3_Fast::Screen_EPD_EXT3_Fast(eScreen_EPD_EXT3_t eScreen_EPD_EXT3, pins_t board)
+Screen_EPD_EXT3_Fast::Screen_EPD_EXT3_Fast(eScreen_EPD_t eScreen_EPD_EXT3, pins_t board)
 {
-    u_eScreen_EPD_EXT3 = eScreen_EPD_EXT3;
+    u_eScreen_EPD = eScreen_EPD_EXT3;
     b_pin = board;
     u_newImage = 0; // nullptr
 }
 
 void Screen_EPD_EXT3_Fast::begin()
 {
-    u_codeExtra = (u_eScreen_EPD_EXT3 >> 16) & 0xff;
-    u_codeSize = (u_eScreen_EPD_EXT3 >> 8) & 0xff;
-    u_codeType = u_eScreen_EPD_EXT3 & 0xff;
-    _screenColourBits = 2; // BWR and BWRY
+    u_eScreen_EPD = u_eScreen_EPD;
+    u_codeSize = SCREEN_SIZE(u_eScreen_EPD);
+    u_codeFilm = SCREEN_FILM(u_eScreen_EPD);
+    u_codeDriver = SCREEN_DRIVER(u_eScreen_EPD);
+    u_codeExtra = SCREEN_EXTRA(u_eScreen_EPD);
+    v_screenColourBits = 2; // BWR and BWRY
 
-    // Configure board
-    u_begin(b_pin, FAMILY_SMALL, 0);
+    // Checks
+    switch (u_codeFilm)
+    {
+        case FILM_P: // BWR, fast update
+        case FILM_K: // BWR, fast update and wide temperature
+
+            break;
+
+        default:
+
+            mySerial.println();
+            mySerial.println(formatString("hV * Screen %i-%cS-0%c with no fast update", u_codeSize, u_codeFilm, u_codeDriver));
+            while (0x01);
+            break;
+    }
 
     //
     // === Touch section
     //
-    if (!(u_codeExtra & FEATURE_TOUCH))
+    if ((u_codeExtra & EXTRA_TOUCH) != EXTRA_TOUCH)
     {
-        Serial.println("");
-        Serial.println(formatString("! Error - Screen %06x non touch", u_eScreen_EPD_EXT3));
+        mySerial.println("");
+        mySerial.println(formatString("! Error - Screen %06x non touch", u_eScreen_EPD));
     }
     //
     // === End of touch section
     //
 
+    // Configure board
+    b_begin(b_pin, FAMILY_SMALL, 0);
+
+    //
+    // === Touch section
+    //
+#if (TOUCH_MODE != USE_TOUCH_NONE)
+
+    if ((b_pin.touchInt == NOT_CONNECTED) or (b_pin.touchReset == NOT_CONNECTED))
+    {
+        mySerial.println();
+        mySerial.println("hV * Pins touchInt or touchReset not defined");
+        while (0x01);
+    }
+
+#endif // TOUCH_MODE
+    //
+    // === End of touch section
+    //
+
+    // Sizes
     switch (u_codeSize)
     {
-        case 0x27: // 2.71" and 2.71"-Touch
+        case SIZE_271: // 2.71" and 2.71"-Touch
 
-            _screenSizeV = 264; // vertical = wide size
-            _screenSizeH = 176; // horizontal = small size
-            _screenDiagonal = 271;
+            v_screenSizeV = 264; // vertical = wide size
+            v_screenSizeH = 176; // horizontal = small size
             break;
 
-        case 0x37: // 3.70" and 3.70"-Touch
+        case SIZE_370: // 3.70" and 3.70"-Touch
 
-            _screenSizeV = 416; // vertical = wide size
-            _screenSizeH = 240; // horizontal = small size
-            _screenDiagonal = 370;
+            v_screenSizeV = 416; // vertical = wide size
+            v_screenSizeH = 240; // horizontal = small size
             break;
 
         default:
 
+            mySerial.println();
+            mySerial.println(formatString("hV * Screen %i-%cS-0%c is not supported", u_codeSize, u_codeFilm, u_codeDriver));
+            while (0x01);
             break;
     } // u_codeSize
+    v_screenDiagonal = u_codeSize;
 
-    u_bufferDepth = _screenColourBits; // 2 colours
-    u_bufferSizeV = _screenSizeV; // vertical = wide size
-    u_bufferSizeH = _screenSizeH / 8; // horizontal = small size 112 / 8, 1 bit per pixel
+    // Report
+    mySerial.println(formatString("hV = Screen %s %ix%i", WhoAmI().c_str(), screenSizeX(), screenSizeY()));
+    mySerial.println(formatString("hV = Number %i-%cS-0%c", u_codeSize, u_codeFilm, u_codeDriver));
+    mySerial.println(formatString("hV = PDLS %s v%i.%i.%i", SCREEN_EPD_EXT3_VARIANT, SCREEN_EPD_EXT3_RELEASE / 100, (SCREEN_EPD_EXT3_RELEASE / 10) % 10, SCREEN_EPD_EXT3_RELEASE % 10));
+    mySerial.println();
+
+    u_bufferDepth = v_screenColourBits; // 2 colours
+    u_bufferSizeV = v_screenSizeV; // vertical = wide size
+    u_bufferSizeH = v_screenSizeH / 8; // horizontal = small size 112 / 8, 1 bit per pixel
 
     // Force conversion for two unit16_t multiplication into uint32_t.
     // Actually for 1 colour; BWR requires 2 pages.
@@ -281,114 +502,33 @@ void Screen_EPD_EXT3_Fast::begin()
 
     memset(u_newImage, 0x00, u_pageColourSize * u_bufferDepth);
 
-    // Initialise the /CS pins
-    pinMode(b_pin.panelCS, OUTPUT);
-    digitalWrite(b_pin.panelCS, HIGH); // CS# = 1
+    // Turn SPI on, initialise GPIOs and set GPIO levels
+    // Reset panel and get tables
+    resume();
 
-    // New generic solution
-    pinMode(b_pin.panelDC, OUTPUT);
-    pinMode(b_pin.panelReset, OUTPUT);
-    pinMode(b_pin.panelBusy, INPUT); // All Pins 0
-
-    // Initialise Flash /CS as HIGH
-    if (b_pin.flashCS != NOT_CONNECTED)
-    {
-        pinMode(b_pin.flashCS, OUTPUT);
-        digitalWrite(b_pin.flashCS, HIGH);
-    }
-
-    // Initialise slave panel /CS as HIGH
-    if (b_pin.panelCSS != NOT_CONNECTED)
-    {
-        pinMode(b_pin.panelCSS, OUTPUT);
-        digitalWrite(b_pin.panelCSS, HIGH);
-    }
-
-    // Initialise slave Flash /CS as HIGH
-    if (b_pin.flashCSS != NOT_CONNECTED)
-    {
-        pinMode(b_pin.flashCSS, OUTPUT);
-        digitalWrite(b_pin.flashCSS, HIGH);
-    }
-
-    // Initialise SD-card /CS as HIGH
-    if (b_pin.cardCS != NOT_CONNECTED)
-    {
-        pinMode(b_pin.cardCS, OUTPUT);
-        digitalWrite(b_pin.cardCS, HIGH);
-    }
-
-    // Initialise SPI
-    _settingScreen = {4000000, MSBFIRST, SPI_MODE0};
-
-#if defined(ENERGIA)
-
-    SPI.begin();
-    SPI.setBitOrder(_settingScreen.bitOrder);
-    SPI.setDataMode(_settingScreen.dataMode);
-    SPI.setClockDivider(SPI_CLOCK_MAX / min(SPI_CLOCK_MAX, _settingScreen.clock));
-
-#else
-
-#if defined(ARDUINO_XIAO_ESP32C3)
-
-    // Board Xiao ESP32-C3 crashes if pins are specified.
-    SPI.begin(8, 9, 10); // SCK MISO MOSI
-
-#elif defined(ARDUINO_NANO_ESP32)
-
-    // Board Arduino Nano ESP32 arduino_nano_nora v2.0.11
-    SPI.begin();
-
-#elif defined(ARDUINO_ARCH_ESP32)
-
-    // Board ESP32-Pico-DevKitM-2 crashes if pins are not specified.
-    SPI.begin(14, 12, 13); // SCK MISO MOSI
-
-#else
-
-    SPI.begin();
-
-#endif // ARDUINO_ARCH_ESP32
-
-    SPI.beginTransaction(_settingScreen);
-
-#endif // ENERGIA
-
-    // Reset
-    b_reset(5, 5, 10, 5, 5);
-
-    // Check type and get tables
-    COG_getUserData(); // nothing sent to panel
-
-    // Standard
-    hV_Screen_Buffer::begin();
-
-    setOrientation(0);
+    // Fonts
+    hV_Screen_Buffer::begin(); // Standard
     if (f_fontMax() > 0)
     {
         f_selectFont(0);
     }
     f_fontSolid = false;
 
-    _penSolid = false;
+    // Orientation
+    setOrientation(0);
+
+    v_penSolid = false;
     u_invert = false;
-
-    // Report
-    Serial.println(formatString("= Screen %s %ix%i", WhoAmI().c_str(), screenSizeX(), screenSizeY()));
-    Serial.println(formatString("= PDLS %s v%i.%i.%i", SCREEN_EPD_EXT3_VARIANT, SCREEN_EPD_EXT3_RELEASE / 100, (SCREEN_EPD_EXT3_RELEASE / 10) % 10, SCREEN_EPD_EXT3_RELEASE % 10));
-
-    clear();
 
     //
     // === Touch section
     //
-    _touchTrim = 0x00; // no touch
-    _touchEvent = false;
+    v_touchTrim = 0x00; // no touch
+    v_touchEvent = false;
 
 #if (TOUCH_MODE != USE_TOUCH_NONE)
 
-    _beginTouch();
+    s_beginTouch();
 
 #endif // TOUCH_MODE
     //
@@ -403,7 +543,26 @@ String Screen_EPD_EXT3_Fast::WhoAmI()
     char work[64] = {0};
     u_WhoAmI(work);
 
-    return formatString("iTC %i.%02i\"%s", _screenDiagonal / 100, _screenDiagonal % 100, work);
+    return formatString("iTC %i.%02i\"%s", v_screenDiagonal / 100, v_screenDiagonal % 100, work);
+}
+
+void Screen_EPD_EXT3_Fast::resume()
+{
+    b_resume();
+
+    // Check type and get tables
+    if (u_flagOTP == false)
+    {
+        hV_HAL_SPI3_begin();
+        COG_getDataOTP(); // 3-wire SPI read OTP memory
+    }
+
+    // Reset
+    COG_reset();
+
+    // Start SPI and Wire
+    hV_HAL_SPI_begin(); // Standard 8 MHz
+    // hV_HAL_Wire_begin();
 }
 
 uint8_t Screen_EPD_EXT3_Fast::flushMode(uint8_t updateMode)
@@ -415,12 +574,13 @@ uint8_t Screen_EPD_EXT3_Fast::flushMode(uint8_t updateMode)
         case UPDATE_FAST:
         case UPDATE_GLOBAL:
 
-            _flushFast();
+            s_flushFast();
             break;
 
         default:
 
-            Serial.println("* PDLS - UPDATE_NONE invoked");
+            mySerial.println();
+            mySerial.println("hV ! PDLS - UPDATE_NONE invoked");
             break;
     }
 
@@ -432,7 +592,7 @@ void Screen_EPD_EXT3_Fast::flush()
     flushMode(UPDATE_FAST);
 }
 
-void Screen_EPD_EXT3_Fast::_flushFast()
+void Screen_EPD_EXT3_Fast::s_flushFast()
 {
     // Configure
     COG_initial(UPDATE_FAST);
@@ -450,9 +610,10 @@ void Screen_EPD_EXT3_Fast::clear(uint16_t colour)
 {
     if (colour == myColours.grey)
     {
+        // black = 0-1, white = 0-0
         for (uint16_t i = 0; i < u_bufferSizeV; i++)
         {
-            uint16_t pattern = (i % 2) ? 0b10101010 : 0b01010101;
+            uint8_t pattern = (i % 2) ? 0b10101010 : 0b01010101;
             for (uint16_t j = 0; j < u_bufferSizeH; j++)
             {
                 u_newImage[i * u_bufferSizeH + j] = pattern;
@@ -461,17 +622,17 @@ void Screen_EPD_EXT3_Fast::clear(uint16_t colour)
     }
     else if ((colour == myColours.white) xor u_invert)
     {
-        // physical black 00
+        // physical black 0-0
         memset(u_newImage, 0x00, u_pageColourSize);
     }
     else
     {
-        // physical white 10
+        // physical white 1-0
         memset(u_newImage, 0xff, u_pageColourSize);
     }
 }
 
-void Screen_EPD_EXT3_Fast::regenerate()
+void Screen_EPD_EXT3_Fast::regenerate(uint8_t mode)
 {
     clear(myColours.black);
     flush();
@@ -482,11 +643,10 @@ void Screen_EPD_EXT3_Fast::regenerate()
     delay(100);
 }
 
-void Screen_EPD_EXT3_Fast::_setPoint(uint16_t x1, uint16_t y1, uint16_t colour)
+void Screen_EPD_EXT3_Fast::s_setPoint(uint16_t x1, uint16_t y1, uint16_t colour)
 {
     // Orient and check coordinates are within screen
-    // _orientCoordinates() returns false = success, true = error
-    if (_orientCoordinates(x1, y1) == RESULT_ERROR)
+    if (s_orientCoordinates(x1, y1) == RESULT_ERROR)
     {
         return;
     }
@@ -507,47 +667,47 @@ void Screen_EPD_EXT3_Fast::_setPoint(uint16_t x1, uint16_t y1, uint16_t colour)
     }
 
     // Coordinates
-    uint32_t z1 = _getZ(x1, y1);
-    uint16_t b1 = _getB(x1, y1);
+    uint32_t z1 = s_getZ(x1, y1);
+    uint16_t b1 = s_getB(x1, y1);
 
     // Basic colours
     if ((colour == myColours.white) xor u_invert)
     {
-        // physical black 00
+        // physical black 0-0
         bitClear(u_newImage[z1], b1);
     }
     else if ((colour == myColours.black) xor u_invert)
     {
-        // physical white 10
+        // physical white 1-0
         bitSet(u_newImage[z1], b1);
     }
 }
 
-void Screen_EPD_EXT3_Fast::_setOrientation(uint8_t orientation)
+void Screen_EPD_EXT3_Fast::s_setOrientation(uint8_t orientation)
 {
-    _orientation = orientation % 4;
+    v_orientation = orientation % 4;
 }
 
-bool Screen_EPD_EXT3_Fast::_orientCoordinates(uint16_t & x, uint16_t & y)
+bool Screen_EPD_EXT3_Fast::s_orientCoordinates(uint16_t & x, uint16_t & y)
 {
     bool _flagResult = RESULT_ERROR; // false = success, true = error
-    switch (_orientation)
+    switch (v_orientation)
     {
         case 3: // checked, previously 1
 
-            if ((x < _screenSizeV) and (y < _screenSizeH))
+            if ((x < v_screenSizeV) and (y < v_screenSizeH))
             {
-                x = _screenSizeV - 1 - x;
+                x = v_screenSizeV - 1 - x;
                 _flagResult = RESULT_SUCCESS;
             }
             break;
 
         case 2: // checked
 
-            if ((x < _screenSizeH) and (y < _screenSizeV))
+            if ((x < v_screenSizeH) and (y < v_screenSizeV))
             {
-                x = _screenSizeH - 1 - x;
-                y = _screenSizeV - 1 - y;
+                x = v_screenSizeH - 1 - x;
+                y = v_screenSizeV - 1 - y;
                 swap(x, y);
                 _flagResult = RESULT_SUCCESS;
             }
@@ -555,16 +715,16 @@ bool Screen_EPD_EXT3_Fast::_orientCoordinates(uint16_t & x, uint16_t & y)
 
         case 1: // checked, previously 3
 
-            if ((x < _screenSizeV) and (y < _screenSizeH))
+            if ((x < v_screenSizeV) and (y < v_screenSizeH))
             {
-                y = _screenSizeH - 1 - y;
+                y = v_screenSizeH - 1 - y;
                 _flagResult = RESULT_SUCCESS;
             }
             break;
 
         default: // checked
 
-            if ((x < _screenSizeH) and (y < _screenSizeV))
+            if ((x < v_screenSizeH) and (y < v_screenSizeV))
             {
                 swap(x, y);
                 _flagResult = RESULT_SUCCESS;
@@ -575,18 +735,18 @@ bool Screen_EPD_EXT3_Fast::_orientCoordinates(uint16_t & x, uint16_t & y)
     return _flagResult;
 }
 
-uint32_t Screen_EPD_EXT3_Fast::_getZ(uint16_t x1, uint16_t y1)
+uint32_t Screen_EPD_EXT3_Fast::s_getZ(uint16_t x1, uint16_t y1)
 {
     uint32_t z1 = 0;
     // According to 11.98 inch Spectra Application Note
-    // at http:// www.pervasivedisplays.com/LiteratureRetrieve.aspx?ID=245146
+    // at http://www.pervasivedisplays.com/LiteratureRetrieve.aspx?ID=245146
 
     z1 = (uint32_t)x1 * u_bufferSizeH + (y1 >> 3);
 
     return z1;
 }
 
-uint16_t Screen_EPD_EXT3_Fast::_getB(uint16_t x1, uint16_t y1)
+uint16_t Screen_EPD_EXT3_Fast::s_getB(uint16_t x1, uint16_t y1)
 {
     uint16_t b1 = 0;
 
@@ -595,21 +755,20 @@ uint16_t Screen_EPD_EXT3_Fast::_getB(uint16_t x1, uint16_t y1)
     return b1;
 }
 
-uint16_t Screen_EPD_EXT3_Fast::_getPoint(uint16_t x1, uint16_t y1)
+uint16_t Screen_EPD_EXT3_Fast::s_getPoint(uint16_t x1, uint16_t y1)
 {
     // Orient and check coordinates are within screen
-    // _orientCoordinates() returns false = success, true = error
-    if (_orientCoordinates(x1, y1) == RESULT_ERROR)
+    if (s_orientCoordinates(x1, y1) == RESULT_ERROR)
     {
-        return 0;
+        return 0x0000;
     }
 
     uint16_t _result = 0;
     uint8_t _value = 0;
 
     // Coordinates
-    uint32_t z1 = _getZ(x1, y1);
-    uint16_t b1 = _getB(x1, y1);
+    uint32_t z1 = s_getZ(x1, y1);
+    uint16_t b1 = s_getB(x1, y1);
 
     _value = bitRead(u_newImage[z1], b1);
     _value <<= 4;
@@ -640,52 +799,20 @@ uint16_t Screen_EPD_EXT3_Fast::_getPoint(uint16_t x1, uint16_t y1)
 //
 #if (TOUCH_MODE != USE_TOUCH_NONE)
 
-void Screen_EPD_EXT3_Fast::_wireWriteRead(uint8_t address, uint8_t * dataWrite, size_t sizeWrite, uint8_t * dataRead, size_t sizeRead)
+void Screen_EPD_EXT3_Fast::s_beginTouch()
 {
-    Wire.beginTransmission(address);
-    if (sizeWrite > 0)
-    {
-        for (uint8_t index = 0; index < sizeWrite; index++)
-        {
-            Wire.write(dataWrite[index]);
-        }
-    }
-    Wire.endTransmission();
+    v_touchTrim = 0x10; // standard threshold
+    v_touchEvent = true;
 
-    if (sizeRead > 0)
-    {
-        memset(dataRead, 0x00, sizeRead);
-        Wire.requestFrom(address, sizeRead);
-        while (Wire.available() < sizeRead)
-        {
-            delay(10);
-        }
+    hV_HAL_Wire_begin();
 
-        for (uint8_t index = 0; index < sizeRead; index++)
-        {
-            dataRead[index] = Wire.read();
-        }
-    }
-}
+    // if (b_pin.touchInt != NOT_CONNECTED) already tested
+    pinMode(b_pin.touchInt, INPUT_PULLUP);
 
-void Screen_EPD_EXT3_Fast::_beginTouch()
-{
-    _touchTrim = 0x10; // standard threshold
-    _touchEvent = true;
+    // if (b_pin.touchReset != NOT_CONNECTED) already tested
+    pinMode(b_pin.touchReset, OUTPUT);
 
-    Wire.begin();
-
-    if (b_pin.touchInt != NOT_CONNECTED)
-    {
-        pinMode(b_pin.touchInt, INPUT_PULLUP);
-    }
-
-    if (b_pin.touchReset != NOT_CONNECTED)
-    {
-        pinMode(b_pin.touchReset, OUTPUT);
-    }
-
-    if (u_codeSize == 0x27)
+    if (u_codeSize == SIZE_271)
     {
         digitalWrite(b_pin.touchReset, HIGH);
         delay(100);
@@ -694,19 +821,19 @@ void Screen_EPD_EXT3_Fast::_beginTouch()
         digitalWrite(b_pin.touchReset, HIGH);
         delay(100);
 
-        _touchAddress = TOUCH_271_ADDRESS; // 0x41
+        s_touchAddress = TOUCH_271_ADDRESS; // 0x41
 
         uint8_t bufferWrite[1] = {0};
         uint8_t bufferRead[10] = {0};
 
         bufferWrite[0] = 0x20;
-        _wireWriteRead(_touchAddress, bufferWrite, 1, bufferRead, 10);
-        _touchXmin = 0;
-        _touchXmax = bufferRead[0] + (bufferRead[1] << 8); // Xmax
-        _touchYmin = 0;
-        _touchYmax = bufferRead[2] + (bufferRead[3] << 8); // Ymax
+        hV_HAL_Wire_transfer(s_touchAddress, bufferWrite, 1, bufferRead, 10);
+        v_touchXmin = 0;
+        v_touchXmax = bufferRead[0] + (bufferRead[1] << 8); // Xmax
+        v_touchYmin = 0;
+        v_touchYmax = bufferRead[2] + (bufferRead[3] << 8); // Ymax
     }
-    else if (u_codeSize == 0x37)
+    else if (u_codeSize == SIZE_370)
     {
         digitalWrite(b_pin.touchReset, HIGH);
         delay(10);
@@ -715,28 +842,27 @@ void Screen_EPD_EXT3_Fast::_beginTouch()
         digitalWrite(b_pin.touchReset, HIGH);
         delay(1000);
 
-        _touchAddress = TOUCH_370_ADDRESS; // 0x38
+        s_touchAddress = TOUCH_370_ADDRESS; // 0x38
 
-        _touchXmin = 0;
-        _touchXmax = 239; // Xmax, hardware hard-coded
-        _touchYmin = 0;
-        _touchYmax = 415; // Ymax, hardware hard-coded
+        v_touchXmin = 0;
+        v_touchXmax = 239; // Xmax, hardware hard-coded
+        v_touchYmin = 0;
+        v_touchYmax = 415; // Ymax, hardware hard-coded
     } // u_codeSize
 
-    _touchPrevious = TOUCH_EVENT_NONE;
+    s_touchPrevious = TOUCH_EVENT_NONE;
 }
 
-void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t & z0, uint16_t & t0)
+void Screen_EPD_EXT3_Fast::s_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t & z0, uint16_t & t0)
 {
-    delay(10);
-
-    if (u_codeSize == 0x27)
+    if (u_codeSize == SIZE_271)
     {
         uint8_t bufferWrite[1] = {0};
         uint8_t bufferRead[5] = {0};
 
         bufferWrite[0] = 0x10; // check
-        _wireWriteRead(_touchAddress, bufferWrite, 1, bufferRead, 1);
+        delay(10);
+        hV_HAL_Wire_transfer(s_touchAddress, bufferWrite, 1, bufferRead, 1);
 
         uint8_t number = bufferRead[0];
         z0 = 0;
@@ -748,7 +874,7 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
         if ((number > 0) and (number < 3))
         {
             bufferWrite[0] = 0x11; // report
-            _wireWriteRead(_touchAddress, bufferWrite, 1, bufferRead, 5);
+            hV_HAL_Wire_transfer(s_touchAddress, bufferWrite, 1, bufferRead, 5);
 
             uint8_t status = bufferRead[0];
             x0 = (bufferRead[1] << 8) + bufferRead[2];
@@ -756,12 +882,12 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
 
             if (status & 0x80) // touch
             {
-                t0 = (_touchPrevious != TOUCH_EVENT_NONE) ? TOUCH_EVENT_MOVE : TOUCH_EVENT_PRESS;
+                t0 = (s_touchPrevious != TOUCH_EVENT_NONE) ? TOUCH_EVENT_MOVE : TOUCH_EVENT_PRESS;
 
                 // Keep position for next release
-                _touchPrevious = TOUCH_EVENT_PRESS;
-                _touchX = x0;
-                _touchY = y0;
+                s_touchPrevious = TOUCH_EVENT_PRESS;
+                s_touchX = x0;
+                s_touchY = y0;
             }
             else
             {
@@ -771,7 +897,7 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
         }
         else // no touch
         {
-            if (_touchPrevious == TOUCH_EVENT_NONE)
+            if (s_touchPrevious == TOUCH_EVENT_NONE)
             {
                 t0 = TOUCH_EVENT_NONE;
                 z0 = 0;
@@ -779,15 +905,15 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
             else
             {
                 // Take previous position for release
-                _touchPrevious = TOUCH_EVENT_NONE;
+                s_touchPrevious = TOUCH_EVENT_NONE;
                 t0 = TOUCH_EVENT_RELEASE;
-                x0 = _touchX;
-                y0 = _touchY;
+                x0 = s_touchX;
+                y0 = s_touchY;
                 z0 = 0x16;
             }
         }
     }
-    else if (u_codeSize == 0x37)
+    else if (u_codeSize == SIZE_370)
     {
         uint8_t flagInterrupt = 1 - digitalRead(b_pin.touchInt);
 
@@ -803,7 +929,7 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
 
             bufferWrite[0] = 0x00;
             delay(10);
-            _wireWriteRead(_touchAddress, bufferWrite, 1, bufferRead, 3 + 6); // report
+            hV_HAL_Wire_transfer(s_touchAddress, bufferWrite, 1, bufferRead, 3 + 6); // report
 
             // char * stringEvent[] = {"Down", "Up", "Contact", "Reserved"};
             // uint8_t event = bufferRead[3 + 6 * 0 + 0] >> 6;
@@ -815,12 +941,12 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
                 x0 = ((bufferRead[3 + 6 * 0 + 0] & 0x0f) << 8) + bufferRead[3 + 6 * 0 + 1];
                 y0 = ((bufferRead[3 + 6 * 0 + 2] & 0x0f) << 8) + bufferRead[3 + 6 * 0 + 3];
 
-                t0 = (_touchPrevious != TOUCH_EVENT_NONE) ? TOUCH_EVENT_MOVE : TOUCH_EVENT_PRESS;
+                t0 = (s_touchPrevious != TOUCH_EVENT_NONE) ? TOUCH_EVENT_MOVE : TOUCH_EVENT_PRESS;
 
                 // Keep position for next release
-                _touchPrevious = TOUCH_EVENT_PRESS;
-                _touchX = x0;
-                _touchY = y0;
+                s_touchPrevious = TOUCH_EVENT_PRESS;
+                s_touchX = x0;
+                s_touchY = y0;
                 z0 = 0x16;
             }
             else
@@ -830,35 +956,29 @@ void Screen_EPD_EXT3_Fast::_getRawTouch(uint16_t & x0, uint16_t & y0, uint16_t &
         }
         else // no touch
         {
-            if (_touchPrevious == TOUCH_EVENT_NONE)
+            if (s_touchPrevious == TOUCH_EVENT_NONE)
             {
                 t0 = TOUCH_EVENT_NONE;
                 z0 = 0;
             }
             else // Take previous position for release
             {
-                _touchPrevious = TOUCH_EVENT_NONE;
+                s_touchPrevious = TOUCH_EVENT_NONE;
                 t0 = TOUCH_EVENT_RELEASE;
-                x0 = _touchX;
-                y0 = _touchY;
+                x0 = s_touchX;
+                y0 = s_touchY;
                 z0 = 0x16;
             }
         }
     } // u_codeSize
 }
 
-bool Screen_EPD_EXT3_Fast::_getInterruptTouch()
+bool Screen_EPD_EXT3_Fast::s_getInterruptTouch()
 {
-    if (b_pin.touchInt != NOT_CONNECTED)
-    {
-        // Translate for true = interrupt
-        // 271 and 370: LOW = false for interrupt
-        return (digitalRead(b_pin.touchInt) == LOW);
-    }
-    else
-    {
-        return false;
-    }
+    // if (b_pin.touchInt != NOT_CONNECTED) already tested
+    // Translate for true = interrupt
+    // 271 and 370: LOW = false for interrupt
+    return (digitalRead(b_pin.touchInt) == LOW);
 }
 #endif // TOUCH_MODE
 //

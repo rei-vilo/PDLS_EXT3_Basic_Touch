@@ -53,8 +53,12 @@ Hardware
 
 ## Licence
 
-**Copyright** &copy; Rei Vilo, 2010-2023
+**Copyright** &copy; Rei Vilo, 2010-2024
+
+For exclusive use with Pervasive Displays screens
 
 **Licence** [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](./LICENCE.md)
 
 ![](img/by-sa.svg)
+
+**Portions** &copy; Pervasive Displays, 2010-2024
