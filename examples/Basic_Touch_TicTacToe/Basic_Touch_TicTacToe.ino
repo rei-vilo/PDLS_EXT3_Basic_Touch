@@ -5,11 +5,12 @@
 /// @details Library for Pervasive Displays EXT3 - Basic level
 ///
 /// @author Rei Vilo
-/// @date 20 Mar 2023
-/// @version 607
+/// @date 21 Mar 2024
+/// @version 801
 ///
-/// @copyright (c) Rei Vilo, 2010-2023
+/// @copyright (c) Rei Vilo, 2010-2024
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+/// @copyright For exclusive use with Pervasive Displays screens
 ///
 /// @see ReadMe.txt for references
 /// @n
@@ -41,9 +42,10 @@
 // Define variables and constants
 
 // === Pervasive Displays iTC
+
 // --- Touch
-// Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_271_09_Touch, boardRaspberryPiPico_RP2040);
-Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_370_0C_Touch, boardRaspberryPiPico_RP2040);
+// Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_271_KS_09_Touch, boardRaspberryPiPico_RP2040);
+Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_370_PS_0C_Touch, boardRaspberryPiPico_RP2040);
 
 uint16_t x, y, dx, dy;
 
@@ -296,21 +298,21 @@ void playGame()
     }
     while ((winner == PLAYER_NONE) and (moves < NUMBER * NUMBER + 1));
 
-    Serial.print("--- ");
+    mySerial.print("--- ");
     delay(100);
     switch (winner)
     {
         case PLAYER_HUMAN:
-            Serial.println("HUMAN WINS");
+            mySerial.println("HUMAN WINS");
 
             break;
 
         case PLAYER_MCU:
-            Serial.println("MCU WINS");
+            mySerial.println("MCU WINS");
             break;
 
         default:
-            Serial.println("DRAW");
+            mySerial.println("DRAW");
             break;
     }
     delay(100);
@@ -324,7 +326,7 @@ void moveHuman()
     coordinates_s nextMove;
     uint16_t ttx, tty, ttt;
 
-    Serial.println("--- PLAYER_HUMAN");
+    mySerial.println("--- PLAYER_HUMAN");
 
     tt = TOUCH_EVENT_NONE;
     ttt = TOUCH_EVENT_NONE;
@@ -357,20 +359,20 @@ void moveHuman()
 
 void printBoard()
 {
-    // Serial.println("Board:");
+    // mySerial.println("Board:");
     for (uint8_t i = 0; i < NUMBER; i++)
     {
-        Serial.print("[ ");
+        mySerial.print("[ ");
         for (uint8_t j = 0; j < NUMBER; j++)
         {
-            // Serial.print(board[i * 3 + j]);
-            Serial.print(board[j][i]);
-            Serial.print(" ");
+            // mySerial.print(board[i * 3 + j]);
+            mySerial.print(board[j][i]);
+            mySerial.print(" ");
         }
 
-        Serial.println("]");
+        mySerial.println("]");
     }
-    Serial.println("");
+    mySerial.println("");
 }
 
 bool checkHuman(coordinates_s & coordinates)
@@ -427,7 +429,7 @@ void moveMCU()
     uint8_t counter = 0;
     uint8_t movesPlayed = 0;
     coordinates_s nextMove;
-    Serial.println("--- PLAYER_MCU");
+    mySerial.println("--- PLAYER_MCU");
 
     // Four corners
     uint8_t firstMovesI[4] = { 0, 0, NUMBER - 1, NUMBER - 1 };
@@ -749,16 +751,17 @@ uint8_t checkWinner()
 void setup()
 {
     // Start
-    Serial.begin(115200);
+    // mySerial = Serial by default, otherwise edit hV_HAL_Peripherals.h
+    mySerial.begin(115200);
     delay(500);
-    Serial.println();
-    Serial.println("=== " __FILE__);
-    Serial.println("=== " __DATE__ " " __TIME__);
-    Serial.println();
+    mySerial.println();
+    mySerial.println("=== " __FILE__);
+    mySerial.println("=== " __DATE__ " " __TIME__);
+    mySerial.println();
 
-    Serial.print("begin... ");
+    mySerial.print("begin... ");
     myScreen.begin();
-    Serial.println(myScreen.WhoAmI());
+    mySerial.println(myScreen.WhoAmI());
 
     myScreen.setOrientation(ORIENTATION_PORTRAIT);
     myScreen.selectFont(Font_Terminal12x16);
@@ -801,7 +804,7 @@ void loop()
 
     if (tt == TOUCH_EVENT_PRESS)
     {
-        Serial.println("=== START");
+        mySerial.println("=== START");
         myScreen.regenerate();
         resetGame();
         drawGameScreen();

@@ -5,11 +5,12 @@
 /// @details Library for Pervasive Displays EXT3 - Basic level
 ///
 /// @author Rei Vilo
-/// @date 20 Mar 2023
-/// @version 607
+/// @date 21 Mar 2024
+/// @version 801
 ///
-/// @copyright (c) Rei Vilo, 2010-2023
+/// @copyright (c) Rei Vilo, 2010-2024
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+/// @copyright For exclusive use with Pervasive Displays screens
 ///
 /// @see ReadMe.txt for references
 /// @n
@@ -36,10 +37,9 @@
 
 // Define variables and constants
 
-// === Pervasive Displays iTC
 // --- Touch
-// Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_271_09_Touch, boardRaspberryPiPico_RP2040);
-Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_EXT3_370_0C_Touch, boardRaspberryPiPico_RP2040);
+// Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_271_KS_09_Touch, boardRaspberryPiPico_RP2040);
+Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_370_PS_0C_Touch, boardRaspberryPiPico_RP2040);
 
 // Prototypes
 
@@ -52,10 +52,10 @@ void wait(uint8_t second)
 {
     for (uint8_t i = second; i > 0; i--)
     {
-        Serial.print(formatString(" > %i  \r", i));
+        mySerial.print(formatString(" > %i  \r", i));
         delay(1000);
     }
-    Serial.print("         \r");
+    mySerial.print("         \r");
 }
 
 #if (DISPLAY_TOUCH == 1)
@@ -90,7 +90,7 @@ void displayTouch(bool flag = true)
                 myScreen.circle(x, y, 4, myColours.black);
                 myScreen.flush();
 
-                Serial.print(-k);
+                mySerial.print(-k);
                 k--;
             }
 
@@ -125,33 +125,34 @@ void displayTouch(bool flag = true)
 void setup()
 {
     // Start
-    Serial.begin(115200);
+    // mySerial = Serial by default, otherwise edit hV_HAL_Peripherals.h
+    mySerial.begin(115200);
     delay(500);
-    Serial.println();
-    Serial.println("=== " __FILE__);
-    Serial.println("=== " __DATE__ " " __TIME__);
-    Serial.println();
+    mySerial.println();
+    mySerial.println("=== " __FILE__);
+    mySerial.println("=== " __DATE__ " " __TIME__);
+    mySerial.println();
 
-    Serial.print("begin... ");
+    mySerial.print("begin... ");
     myScreen.begin();
-    Serial.println(myScreen.WhoAmI());
+    mySerial.println(myScreen.WhoAmI());
 
     myScreen.regenerate();
 
 #if (DISPLAY_TOUCH == 1)
 
-    Serial.println("DISPLAY_TOUCH... ");
+    mySerial.println("DISPLAY_TOUCH... ");
     myScreen.clear();
     displayTouch();
     wait(4);
 
 #endif // DISPLAY_TOUCH
 
-    Serial.println("White... ");
+    mySerial.println("White... ");
     myScreen.regenerate();
 
-    Serial.println("=== ");
-    Serial.println();
+    mySerial.println("=== ");
+    mySerial.println();
 }
 
 // Add loop code
