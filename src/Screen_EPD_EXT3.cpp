@@ -553,7 +553,7 @@ void Screen_EPD_EXT3_Fast::resume()
     // Check type and get tables
     if (u_flagOTP == false)
     {
-        hV_HAL_SPI3_begin();
+        hV_HAL_SPI3_begin(); // Define 3-wire SPI pins
         COG_getDataOTP(); // 3-wire SPI read OTP memory
     }
 
