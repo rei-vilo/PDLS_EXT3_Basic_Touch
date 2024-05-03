@@ -12,17 +12,19 @@ The **PDLS_EXT3_Basic_Touch** provides a high-level interface to drive the e-pap
 + [EPD Extension Kit Gen 3 (EXT3 or EXT3-1)](https://www.pervasivedisplays.com/product/epd-extension-kit-gen-3-EXT3/) and [Touch Expansion Board for EXT3 (EXT3-Touch)](https://www.pervasivedisplays.com/product/touch-expansion-board-ext3-touch/); and
 + iTC [monochrome screens with touch](https://www.pervasivedisplays.com/products/?_sft_etc_itc=tp).
 
-Please refer to [PDLS_EXT3_Basic_Global](https://github.com/rei-vilo/PDLS_EXT3_Basic_Global/issues) for reporting issues and contributing pull requests.
-
 ## Features
 
++ Fast update
 + Graphics routines
 + Text routines
-+ Fast update
 + Touch management
 + GUI with button and text
 + Four extended fonts
+
+## Documentation and support
+
 + Go to the [documentation](https://rei-vilo.github.io/PDLS_EXT3_Basic_Documentation/index.html) 
+° For support, please refer to [PDLS_EXT3_Basic_Global](https://github.com/rei-vilo/PDLS_EXT3_Basic_Global/issues) for reporting issues and contributing pull requests.
 
 ## Installation
 
