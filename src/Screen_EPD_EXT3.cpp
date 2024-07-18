@@ -35,6 +35,7 @@
 // Release 802: Added references to application notes
 // Release 802: Refactored CoG functions
 // Release 803: Added types for string and frame-buffer
+// Release 804: Improved power management
 //
 
 // Library header
@@ -475,7 +476,7 @@ void Screen_EPD_EXT3_Fast::COG_MediumKP_powerOff()
 void Screen_EPD_EXT3_Fast::COG_SmallKP_reset()
 {
     // Application note § 2. Power on COG driver
-    b_reset(5, 5, 10, 5, 5); // small
+    b_reset(5, 5, 10, 5, 5); // Small
 }
 
 void Screen_EPD_EXT3_Fast::COG_SmallKP_getDataOTP()
@@ -896,6 +897,14 @@ void Screen_EPD_EXT3_Fast::begin()
     // === End of touch section
     //
 
+    //
+    // === Large screen section
+    //
+
+    //
+    // === End of Large screen section
+    //
+
     // Configure board
     switch (u_codeSize)
     {
@@ -1001,6 +1010,10 @@ void Screen_EPD_EXT3_Fast::begin()
 
     memset(s_newImage, 0x00, u_pageColourSize * u_bufferDepth);
 
+    setTemperatureC(25); // 25 Celsius = 77 Fahrenheit
+    b_fsmPowerScreen = FSM_OFF;
+    setPowerProfile(MODE_MANUAL, SCOPE_GPIO_ONLY);
+
     // Turn SPI on, initialise GPIOs and set GPIO levels
     // Reset panel and get tables
     resume();
@@ -1034,8 +1047,6 @@ void Screen_EPD_EXT3_Fast::begin()
     //
     // === End of Touch section
     //
-
-    setTemperatureC(25); // 25 Celsius = 77 Fahrenheit
 }
 
 STRING_TYPE Screen_EPD_EXT3_Fast::WhoAmI()
@@ -1046,32 +1057,62 @@ STRING_TYPE Screen_EPD_EXT3_Fast::WhoAmI()
     return formatString("iTC %i.%02i\"%s", v_screenDiagonal / 100, v_screenDiagonal % 100, work);
 }
 
-void Screen_EPD_EXT3_Fast::suspend()
+void Screen_EPD_EXT3_Fast::suspend(uint8_t suspendScope)
 {
-    // Suspend GPIO
-    b_suspend();
-
-    // Suspend SPI
-    hV_HAL_SPI_end();
+    if (((suspendScope & FSM_GPIO_MASK) == FSM_GPIO_MASK) and (b_pin.panelPower != NOT_CONNECTED))
+    {
+        if ((b_fsmPowerScreen & FSM_GPIO_MASK) == FSM_GPIO_MASK)
+        {
+            b_suspend();
+        }
+    }
 }
 
 void Screen_EPD_EXT3_Fast::resume()
 {
-    // Resume GPIO
-    b_resume();
-
-    // Check type and get tables
-    if (u_flagOTP == false)
+    // Target   FSM_ON
+    // Source   FSM_OFF
+    //          FSM_SLEEP
+    if (b_fsmPowerScreen != FSM_ON)
     {
-        hV_HAL_SPI3_begin(); // Define 3-wire SPI pins
-        s_getDataOTP(); // 3-wire SPI read OTP memory
+        if ((b_fsmPowerScreen & FSM_GPIO_MASK) != FSM_GPIO_MASK)
+        {
+            b_resume(); // GPIO
+
+            s_reset(); // Reset
+
+            b_fsmPowerScreen |= FSM_GPIO_MASK;
+        }
+
+        // Check type and get tables
+        if (u_flagOTP == false)
+        {
+            s_getDataOTP(); // 3-wire SPI read OTP memory
+
+            s_reset(); // Reset
+        }
+
+        // Start SPI
+        switch (u_eScreen_EPD)
+        {
+            case eScreen_EPD_150_KS_0J:
+            case eScreen_EPD_152_KS_0J:
+
+                hV_HAL_SPI_begin(16000000); // 1.52" tested with 4, 8, 16 and 32 MHz, with unicity check
+                break;
+
+            case eScreen_EPD_206_KS_0E:
+            case eScreen_EPD_290_KS_0F:
+
+                hV_HAL_SPI_begin(16000000); // 2.06" tested with 4, 8 and 16 MHz, with unicity check
+                break;
+
+            default:
+
+                hV_HAL_SPI_begin(); // Standard 8 MHz, with unicity check
+                break;
+        }
     }
-
-    // Reset
-    s_reset();
-
-    // Start SPI
-    hV_HAL_SPI_begin(); // Standard 8 MHz
 }
 
 void Screen_EPD_EXT3_Fast::s_reset()
@@ -1096,7 +1137,11 @@ void Screen_EPD_EXT3_Fast::s_reset()
 
 void Screen_EPD_EXT3_Fast::s_getDataOTP()
 {
-    uint16_t _readBytes = 0;
+    hV_HAL_SPI_end(); // With unicity check
+
+    hV_HAL_SPI3_begin(); // Define 3-wire SPI pins
+
+    // Get data OTP
     switch (b_family)
     {
         case FAMILY_MEDIUM:
@@ -1117,8 +1162,11 @@ void Screen_EPD_EXT3_Fast::s_getDataOTP()
 
 void Screen_EPD_EXT3_Fast::s_flush(uint8_t updateMode)
 {
-    // Resume GPIO and SPI
-    resume();
+    // Resume
+    if (b_fsmPowerScreen != FSM_ON)
+    {
+        resume();
+    }
 
     switch (b_family)
     {
@@ -1143,8 +1191,11 @@ void Screen_EPD_EXT3_Fast::s_flush(uint8_t updateMode)
             break;
     }
 
-    // Suspend GPIO and SPI
-    suspend();
+    // Suspend
+    if (u_suspendMode == MODE_AUTO)
+    {
+        suspend(u_suspendScope);
+    }
 }
 
 uint8_t Screen_EPD_EXT3_Fast::flushMode(uint8_t updateMode)
@@ -1258,7 +1309,7 @@ void Screen_EPD_EXT3_Fast::s_setOrientation(uint8_t orientation)
 
 bool Screen_EPD_EXT3_Fast::s_orientCoordinates(uint16_t & x, uint16_t & y)
 {
-    bool _flagResult = RESULT_ERROR; // false = success, true = error
+    bool _flagResult = RESULT_ERROR;
     switch (v_orientation)
     {
         case 3: // checked, previously 1
@@ -1325,38 +1376,7 @@ uint16_t Screen_EPD_EXT3_Fast::s_getB(uint16_t x1, uint16_t y1)
 
 uint16_t Screen_EPD_EXT3_Fast::s_getPoint(uint16_t x1, uint16_t y1)
 {
-    // Orient and check coordinates are within screen
-    if (s_orientCoordinates(x1, y1) == RESULT_ERROR)
-    {
-        return 0x0000;
-    }
-
-    uint16_t _result = 0;
-    uint8_t _value = 0;
-
-    // Coordinates
-    uint32_t z1 = s_getZ(x1, y1);
-    uint16_t b1 = s_getB(x1, y1);
-
-    _value = bitRead(s_newImage[z1], b1);
-    _value <<= 4;
-    _value &= 0b11110000;
-
-    // red = 0-1, black = 1-0, white 0-0
-    switch (_value)
-    {
-        case 0x10:
-
-            _result = myColours.black;
-            break;
-
-        default:
-
-            _result = myColours.white;
-            break;
-    }
-
-    return _result;
+    return 0x0000;
 }
 //
 // === End of Class section
