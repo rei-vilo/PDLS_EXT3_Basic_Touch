@@ -1,6 +1,7 @@
 # Pervasive Displays Library Suite - Basic Edition - Touch
 
 [![Release](https://img.shields.io/github/v/release/rei-vilo/PDLS_EXT3_Basic_Touch)](https://github.com/rei-vilo/PDLS_EXT3_Basic_Touch/releases) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/79b420dc349245f0b9548255884de41b)](https://app.codacy.com/gh/rei-vilo/PDLS_EXT3_Basic_Touch/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rei-vilo/PDLS_EXT3_Basic_Touch&amp;utm_campaign=Badge_Grade) ![Arduino lint](https://github.com/rei-vilo/PDLS_EXT3_Basic_Touch/actions/workflows/main.yml/badge.svg) [![GitHub issues](https://img.shields.io/github/issues/rei-vilo/PDLS_EXT3_Basic_Global)](https://github.com/rei-vilo/PDLS_EXT3_Basic_Global/issues)
+
 [![](https://img.shields.io/badge/-Wiki-orange)](https://docs.pervasivedisplays.com/) [![](https://img.shields.io/badge/-User_Guide-orange)](https://pdls.pervasivedisplays.com/userguide/index.html) [![](https://img.shields.io/badge/-Reference_manual-orange)](
 https://rei-vilo.github.io/PDLS_EXT3_Basic_Documentation/html/index.html)
 
@@ -23,6 +24,8 @@ the kits
 + [EXT3-Touch with 2.71" Touch EPD (EPDK-271-Touch)](https://www.pervasivedisplays.com/product/touch-expansion-board-ext3-touch/), which includes the EXT3-1 and EXT3-Touch extension boards and a 2.71"-Touch monochrome panel with embedded fast update and capacitive touch.
 
 ## Features
+
+The Pervasive Displays Library Suite provides a high-level interface to drive the e-paper screens.
 
 + Fast update
 + Graphics routines
