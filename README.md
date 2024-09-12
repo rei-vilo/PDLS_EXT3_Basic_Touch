@@ -11,51 +11,51 @@ The Pervasive Displays Library Suite is specifically designed for the [Pervasive
 
 The **PDLS_EXT3_Basic_Touch** supports the screens
 
-+ iTC [monochrome screens with touch](https://www.pervasivedisplays.com/products/?_sft_etc_itc=tp);
+* iTC [monochrome screens with touch](https://www.pervasivedisplays.com/products/?_sft_etc_itc=tp);
 
 the boards
 
-+ [EPD Extension Kit Gen 3 (EXT3 or EXT3-1)](https://www.pervasivedisplays.com/product/epd-extension-kit-gen-3-EXT3/); 
-+ [E-paper touch display development kit (EXT3-Touch)](https://www.pervasivedisplays.com/product/touch-expansion-board-ext3-touch/);
+* [EPD Extension Kit Gen 3 (EXT3 or EXT3-1)](https://www.pervasivedisplays.com/product/epd-extension-kit-gen-3-EXT3/); 
+* [E-paper touch display development kit (EXT3-Touch)](https://www.pervasivedisplays.com/product/touch-expansion-board-ext3-touch/);
 
 the kits
 
-+ [EPD Pico Kit (EPDK)](https://www.pervasivedisplays.com/product/epd-pico-kit-epdk/), which includes a Raspberry Pi Pico RP2040, an EXT3-1 extension board and a 2.66" monochrome panel.
-+ [EXT3-Touch with 2.71" Touch EPD (EPDK-271-Touch)](https://www.pervasivedisplays.com/product/touch-expansion-board-ext3-touch/), which includes the EXT3-1 and EXT3-Touch extension boards and a 2.71"-Touch monochrome panel with embedded fast update and capacitive touch.
+* [EPD Pico Kit (EPDK)](https://www.pervasivedisplays.com/product/epd-pico-kit-epdk/), which includes a Raspberry Pi Pico RP2040, an EXT3-1 extension board and a 2.66" monochrome panel.
+* [EXT3-Touch with 2.71" Touch EPD (EPDK-271-Touch)](https://www.pervasivedisplays.com/product/touch-expansion-board-ext3-touch/), which includes the EXT3-1 and EXT3-Touch extension boards and a 2.71"-Touch monochrome panel with embedded fast update and capacitive touch.
 
 ## Features
 
 The Pervasive Displays Library Suite provides a high-level interface to drive the e-paper screens.
 
-+ Fast update
-+ Graphics routines
-+ Text routines
-+ Four extended fonts with double-sized variants
-+ Touch management
-+ GUI with button and text
+* Fast update
+* Graphics routines
+* Text routines
+* Four extended fonts with double-sized variants
+* Touch management
+* GUI with button and text
 
 ## Documentation
 
-+ [Wiki](https://docs.pervasivedisplays.com/) 
-+ [User guide](https://pdls.pervasivedisplays.com/userguide/index.html) with commented examples
-+ [Reference manual](https://rei-vilo.github.io/PDLS_EXT3_Basic_Documentation/index.html) 
+* [Wiki](https://docs.pervasivedisplays.com/) 
+* [User guide](https://pdls.pervasivedisplays.com/userguide/index.html) with commented examples
+* [Reference manual](https://rei-vilo.github.io/PDLS_EXT3_Basic_Documentation/index.html) 
 
 ## Support
 
-+ Please refer to [PDLS_EXT3_Basic_Global](https://github.com/rei-vilo/PDLS_EXT3_Basic_Global/issues) for reporting issues and contributing pull requests.
+* Please refer to [PDLS_EXT3_Basic_Global](https://github.com/rei-vilo/PDLS_EXT3_Basic_Global/issues) for reporting issues and contributing pull requests.
 
 ## Installation
 
 Software
 
-+ [Installing Additional Arduino Libraries](https://www.arduino.cc/en/guide/libraries)
+* [Installing Additional Arduino Libraries](https://www.arduino.cc/en/guide/libraries)
 
     + Using the Library Manager
     + Importing a `.zip` Library
 
 Hardware
 
-+ [Assembing the Pervasive Displays EXT3-Touch](https://embeddedcomputing.weebly.com/assembing-the-pervasive-displays-ext3-touch.html)
+* [Assembing the Pervasive Displays EXT3-Touch](https://embeddedcomputing.weebly.com/assembing-the-pervasive-displays-ext3-touch.html)
 * [Connecting the Pervasive Displays e-Paper EPD Extension Kit Gen 3](https://embeddedcomputing.weebly.com/connecting-the-e-paper-epd-extension-kit-gen-3.html)
 
 ## Configuration
