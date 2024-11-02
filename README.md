@@ -1,4 +1,4 @@
-# Pervasive Displays Library Suite - Basic Edition - Touch
+# Pervasive Displays Library Suite - Basic edition - Touch
 
 [![Release](https://img.shields.io/github/v/release/rei-vilo/PDLS_EXT3_Basic_Touch)](https://github.com/rei-vilo/PDLS_EXT3_Basic_Touch/releases) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/79b420dc349245f0b9548255884de41b)](https://app.codacy.com/gh/rei-vilo/PDLS_EXT3_Basic_Touch/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rei-vilo/PDLS_EXT3_Basic_Touch&amp;utm_campaign=Badge_Grade) ![Arduino lint](https://github.com/rei-vilo/PDLS_EXT3_Basic_Touch/actions/workflows/main.yml/badge.svg) [![GitHub issues](https://img.shields.io/github/issues/rei-vilo/PDLS_EXT3_Basic_Global)](https://github.com/rei-vilo/PDLS_EXT3_Basic_Global/issues)
 
@@ -7,7 +7,7 @@ https://rei-vilo.github.io/PDLS_EXT3_Basic_Documentation/html/index.html)
 
 The Pervasive Displays Library Suite is specifically designed for the [Pervasive Displays](https://www.pervasivedisplays.com) e-paper screens, extension boards and evaluation kits.
 
-![](https://pdls.pervasivedisplays.com/userguide/img/Logo_PDI_text_320.png)
+<center>![](https://pdls.pervasivedisplays.com/userguide/img/Logo_PDI_text_320.png)</center>
 
 The **PDLS_EXT3_Basic_Touch** supports the screens
 
@@ -48,6 +48,7 @@ The Pervasive Displays Library Suite provides a high-level interface to drive th
 
 Software
 
+* [Arduino IDE](https://www.arduino.cc/en/software) or [Arduino CLI](https://arduino.github.io/arduino-cli/)
 * [Installing Additional Arduino Libraries](https://www.arduino.cc/en/guide/libraries)
 
     + Using the Library Manager
@@ -68,7 +69,7 @@ Software
 
 Hardware
 
-* Pervasive Displays EPD Extension Kit Gen 3 (EXT3 or EXT3-1)
+* Pervasive Displays EPD Extension Kit Gen 3 (EXT3 or EXT3.1)
 * Pervasive Displays E-paper touch display development kit (EXT3-Touch)
 * Pervasive Displays iTC monochrome screens with touch
 
@@ -83,3 +84,4 @@ For exclusive use with Pervasive Displays screens
 ![](img/by-sa.svg)
 
 **Portions** &copy; Pervasive Displays, 2010-2024
+

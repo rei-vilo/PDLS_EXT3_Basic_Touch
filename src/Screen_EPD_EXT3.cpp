@@ -13,7 +13,7 @@
 // For exclusive use with Pervasive Displays screens
 // Portions (c) Pervasive Displays, 2010-2024
 //
-// Release 509: Added eScreen_EPD_EXT3_271_Fast
+// Release 509: Added support for 271_PS_09
 // Release 527: Added support for ESP32 PSRAM
 // Release 530: Added support for new 3.70"-Touch
 // Release 531: Ready for hV_GUI_Basic
@@ -29,14 +29,18 @@
 // Release 610: Removed partial update
 // Release 700: Refactored screen and board functions
 // Release 701: Improved functions names consistency
+// Release 701: Added support for 290_KS_0F
+// Release 702: Added support for 206_KS_0E
+// Release 703: Added support for 152_KS_0J
 // Release 800: Read OTP memory
 // Release 801: Improved OTP implementation
-// Release 802: Added support for 343-KS-0B xE2343PS0Bx
+// Release 802: Added support for 343_KS_0B
 // Release 802: Added references to application notes
 // Release 802: Refactored CoG functions
 // Release 803: Added types for string and frame-buffer
 // Release 804: Improved power management
 // Release 805: Improved stability
+// Release 806: New library for Wide temperature only
 //
 
 // Library header
@@ -78,8 +82,8 @@ void Screen_EPD_EXT3_Fast::COG_MediumKP_reset()
 void Screen_EPD_EXT3_Fast::COG_MediumKP_getDataOTP()
 {
     // Read OTP
-    uint8_t ui8 = 0;
     uint16_t _readBytes = 0;
+    uint8_t ui8 = 0; // dummy
     u_flagOTP = false;
 
     COG_MediumKP_reset();

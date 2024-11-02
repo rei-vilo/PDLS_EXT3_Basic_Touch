@@ -16,8 +16,8 @@
 /// * 3.70"-Touch reference xTP370PGH0x
 ///
 /// @author Rei Vilo
-/// @date 21 Aug 2024
-/// @version 805
+/// @date 21 Oct 2024
+/// @version 807
 ///
 /// @copyright (c) Rei Vilo, 2010-2024
 /// @copyright All rights reserved
@@ -83,7 +83,7 @@
 ///
 /// @brief Library release number
 ///
-#define SCREEN_EPD_EXT3_RELEASE 805
+#define SCREEN_EPD_EXT3_RELEASE 807
 
 ///
 /// @brief Library variant
@@ -227,7 +227,7 @@ class Screen_EPD_EXT3_Fast final : public hV_Screen_Buffer, public hV_Utilities_
 
     ///
     /// @brief Update the screen
-    /// @param updateMode update mode, default = UPDATE_FAST, otherwise UPDATE_GLOBAL
+    /// @param updateMode update mode, default = UPDATE_FAST
     ///
     void s_flush(uint8_t updateMode = UPDATE_FAST);
 
