@@ -41,6 +41,7 @@
 // Release 804: Improved power management
 // Release 805: Improved stability
 // Release 806: New library for Wide temperature only
+// Release 808: Improved stability
 //
 
 // Library header
@@ -547,21 +548,21 @@ void Screen_EPD_EXT3_Fast::COG_SmallKP_getDataOTP()
     uint16_t offsetPSR = 0x0000;
 
     digitalWrite(b_pin.panelDC, LOW); // Command
-    digitalWrite(b_pin.panelCS, LOW); // Select
+    digitalWrite(b_pin.panelCS, LOW); // CS low = Select
     hV_HAL_SPI3_write(0xa2);
-    digitalWrite(b_pin.panelCS, HIGH); // Unselect
+    digitalWrite(b_pin.panelCS, HIGH); // CS high = Unselect
     delay(10);
 
     digitalWrite(b_pin.panelDC, HIGH); // Data
-    digitalWrite(b_pin.panelCS, LOW); // Select
+    digitalWrite(b_pin.panelCS, LOW); // CS low = Select
     ui8 = hV_HAL_SPI3_read(); // Dummy
-    digitalWrite(b_pin.panelCS, HIGH); // Unselect
-    // mySerial.println, "hV . Dummy read 0x%02x", ui8);
+    digitalWrite(b_pin.panelCS, HIGH); // CS high = Unselect
+    // mySerial.println(formatString("hV . Dummy read 0x%02x", ui8));
 
-    digitalWrite(b_pin.panelCS, LOW); // Select
+    digitalWrite(b_pin.panelCS, LOW); // CS low = Select
     ui8 = hV_HAL_SPI3_read(); // First byte to be checked
-    digitalWrite(b_pin.panelCS, HIGH); // Unselect
-    // hV_HAL_log(LEVEL_INFO, "ui8= 0x%02x", ui8);
+    digitalWrite(b_pin.panelCS, HIGH); // CS high = Unselect
+    // mySerial.println(formatString("hV . ui8 0x%02x", ui8));
 
     // Check bank
     uint8_t bank = ((ui8 == 0xa5) ? 0 : 1);
@@ -636,21 +637,21 @@ void Screen_EPD_EXT3_Fast::COG_SmallKP_getDataOTP()
     {
         for (uint16_t index = 1; index < offsetA5; index += 1)
         {
-            digitalWrite(b_pin.panelCS, LOW); // Select
+            digitalWrite(b_pin.panelCS, LOW); // CS low = Select
             ui8 = hV_HAL_SPI3_read();
-            digitalWrite(b_pin.panelCS, HIGH); // Unselect
+            digitalWrite(b_pin.panelCS, HIGH); // CS high = Unselect
         }
 
-        digitalWrite(b_pin.panelCS, LOW); // Select
+        digitalWrite(b_pin.panelCS, LOW); // CS low = Select
         ui8 = hV_HAL_SPI3_read(); // First byte to be checked
-        digitalWrite(b_pin.panelCS, HIGH); // Unselect
+        digitalWrite(b_pin.panelCS, HIGH); // CS high = Unselect
 
         if (ui8 != 0xa5)
         {
             mySerial.println();
             mySerial.println(formatString("hV * OTP check failed - Bank %i, first 0x%02x, expected 0x%02x", bank, ui8, 0xa5));
             mySerial.flush();
-            while (true);
+            while (0x01);
         }
     }
 
@@ -674,18 +675,18 @@ void Screen_EPD_EXT3_Fast::COG_SmallKP_getDataOTP()
     // Ignore bytes 1..offsetPSR
     for (uint16_t index = offsetA5 + 1; index < offsetPSR; index += 1)
     {
-        digitalWrite(b_pin.panelCS, LOW); // Select
+        digitalWrite(b_pin.panelCS, LOW); // CS low = Select
         ui8 = hV_HAL_SPI3_read();
-        digitalWrite(b_pin.panelCS, HIGH); // Unselect
+        digitalWrite(b_pin.panelCS, HIGH); // CS high = Unselect
     }
 
     // Populate COG_data
     for (uint16_t index = 0; index < _readBytes; index += 1)
     {
-        digitalWrite(b_pin.panelCS, LOW); // Select
+        digitalWrite(b_pin.panelCS, LOW); // CS low = Select
         ui8 = hV_HAL_SPI3_read(); // Read OTP
         COG_data[index] = ui8;
-        digitalWrite(b_pin.panelCS, HIGH); // Unselect
+        digitalWrite(b_pin.panelCS, HIGH); // CS high = Unselect
     }
 
     u_flagOTP = true;
@@ -772,25 +773,25 @@ void Screen_EPD_EXT3_Fast::COG_SmallKP_sendImageData(uint8_t updateMode)
     FRAMEBUFFER_TYPE previousBuffer = s_newImage + u_pageColourSize;
 
     // Send image data
-    // case UPDATE_FAST:
     switch (u_eScreen_EPD)
     {
         case eScreen_EPD_150_KS_0J:
         case eScreen_EPD_152_KS_0J:
 
-            b_sendIndexData(0x24, previousBuffer, u_pageColourSize); // Next frame, blackBuffer
-            b_sendIndexData(0x26, nextBuffer, u_pageColourSize); // Previous frame, 0x00
+            b_sendIndexData(0x24, previousBuffer, u_pageColourSize); // Previous frame, blackBuffer
+            b_sendIndexData(0x26, nextBuffer, u_pageColourSize); // Next frame
             break;
 
         default:
+
             // Additional settings for fast update, 154 213 266 370 and 437 screens (s_flag50)
             if (s_flag50)
             {
                 b_sendCommandData8(0x50, 0x27); // Vcom and data interval setting
             }
 
-            b_sendIndexData(0x10, previousBuffer, u_pageColourSize); // First frame, blackBuffer
-            b_sendIndexData(0x13, nextBuffer, u_pageColourSize); // Second frame, 0x00
+            b_sendIndexData(0x10, previousBuffer, u_pageColourSize); // Previous frame, blackBuffer
+            b_sendIndexData(0x13, nextBuffer, u_pageColourSize); // Next frame
 
             // Additional settings for fast update, 154 213 266 370 and 437 screens (s_flag50)
             if (s_flag50)
@@ -913,18 +914,18 @@ void Screen_EPD_EXT3_Fast::begin()
     // Configure board
     switch (u_codeSize)
     {
-        case SIZE_343: // 3.43"
-        case SIZE_581: // 5.81"
-        case SIZE_741: // 7.41"
+        // case SIZE_343: // 3.43"
+        // case SIZE_581: // 5.81"
+        // case SIZE_741: // 7.41"
+        //
+        //    b_begin(b_pin, FAMILY_MEDIUM, 0);
+        //    break;
 
-            b_begin(b_pin, FAMILY_MEDIUM, 0);
-            break;
-
-        case SIZE_969: // 9.69"
-        case SIZE_1198: // 11.98"
-
-            b_begin(b_pin, FAMILY_LARGE, 50);
-            break;
+        // case SIZE_969: // 9.69"
+        // case SIZE_1198: // 11.98"
+        //
+        //    b_begin(b_pin, FAMILY_LARGE, 50);
+        //    break;
 
         default:
 
@@ -980,7 +981,8 @@ void Screen_EPD_EXT3_Fast::begin()
     v_screenDiagonal = u_codeSize;
 
     // Report
-    mySerial.println(formatString("hV = Screen %s %ix%i", WhoAmI().c_str(), screenSizeX(), screenSizeY()));
+    mySerial.println(formatString("hV = Screen %s", WhoAmI().c_str()));
+    mySerial.println(formatString("hV = Size %ix%i", screenSizeX(), screenSizeY()));
     mySerial.println(formatString("hV = Number %i-%cS-0%c", u_codeSize, u_codeFilm, u_codeDriver));
     mySerial.println(formatString("hV = PDLS %s v%i.%i.%i", SCREEN_EPD_EXT3_VARIANT, SCREEN_EPD_EXT3_RELEASE / 100, (SCREEN_EPD_EXT3_RELEASE / 10) % 10, SCREEN_EPD_EXT3_RELEASE % 10));
     mySerial.println();
@@ -1017,7 +1019,10 @@ void Screen_EPD_EXT3_Fast::begin()
 
     setTemperatureC(25); // 25 Celsius = 77 Fahrenheit
     b_fsmPowerScreen = FSM_OFF;
-    setPowerProfile(POWER_MODE_MANUAL, POWER_SCOPE_GPIO_ONLY);
+    if (b_pin.panelPower != NOT_CONNECTED)
+    {
+        setPowerProfile(POWER_MODE_MANUAL, POWER_SCOPE_GPIO_ONLY);
+    }
 
     // Turn SPI on, initialise GPIOs and set GPIO levels
     // Reset panel and get tables
@@ -1097,24 +1102,24 @@ void Screen_EPD_EXT3_Fast::resume()
             s_reset(); // Reset
         }
 
-        // Start SPI
+        // Start SPI, with unicity check
         switch (u_eScreen_EPD)
         {
             case eScreen_EPD_150_KS_0J:
             case eScreen_EPD_152_KS_0J:
 
-                hV_HAL_SPI_begin(16000000); // 1.52" tested with 4, 8, 16 and 32 MHz, with unicity check
+                hV_HAL_SPI_begin(16000000); // 1.52" tested with 4, 8, 16 and 32 MHz
                 break;
 
             case eScreen_EPD_206_KS_0E:
             case eScreen_EPD_290_KS_0F:
 
-                hV_HAL_SPI_begin(16000000); // 2.06" tested with 4, 8 and 16 MHz, with unicity check
+                hV_HAL_SPI_begin(16000000); // 2.06" tested with 4, 8 and 16 MHz
                 break;
 
             default:
 
-                hV_HAL_SPI_begin(); // Standard 8 MHz, with unicity check
+                hV_HAL_SPI_begin(); // Standard 8 MHz
                 break;
         }
     }

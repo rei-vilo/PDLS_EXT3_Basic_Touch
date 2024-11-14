@@ -1,6 +1,6 @@
 ///
 /// @file Screen_EPD_EXT3.h
-/// @brief Driver for Pervasive Displays iTC monochrome touch screens with EXT3-1 and EXT3-Touch boards
+/// @brief Driver for Pervasive Displays iTC monochrome touch screens with EXT3.1 and EXT3-Touch boards
 ///
 /// @details Project Pervasive Displays Library Suite
 /// @n Based on highView technology
@@ -16,8 +16,8 @@
 /// * 3.70"-Touch reference xTP370PGH0x
 ///
 /// @author Rei Vilo
-/// @date 21 Oct 2024
-/// @version 807
+/// @date 12 Nov 2024
+/// @version 808
 ///
 /// @copyright (c) Rei Vilo, 2010-2024
 /// @copyright All rights reserved
@@ -83,7 +83,7 @@
 ///
 /// @brief Library release number
 ///
-#define SCREEN_EPD_EXT3_RELEASE 807
+#define SCREEN_EPD_EXT3_RELEASE 808
 
 ///
 /// @brief Library variant

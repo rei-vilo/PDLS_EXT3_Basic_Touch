@@ -22,7 +22,7 @@
 ///
 
 // Screen
-#include "PDLS_EXT3_Basic_Wide.h"
+#include "PDLS_EXT3_Basic_Touch.h"
 
 // SDK
 // #include <Arduino.h>

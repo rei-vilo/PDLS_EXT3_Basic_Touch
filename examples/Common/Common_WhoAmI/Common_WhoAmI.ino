@@ -18,7 +18,7 @@
 ///
 
 // Screen
-#include "PDLS_EXT3_Basic_Wide.h"
+#include "PDLS_EXT3_Basic_Touch.h"
 
 // SDK
 // #include <Arduino.h>
@@ -36,7 +36,8 @@
 // Define structures and classes
 
 // Define variables and constants
-Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_271_KS_09, boardRaspberryPiPico_RP2040);
+// Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_271_KS_09_Touch, boardRaspberryPiPico_RP2040);
+Screen_EPD_EXT3_Fast myScreen(eScreen_EPD_370_PS_0C_Touch, boardRaspberryPiPico_RP2040);
 
 // Prototypes
 
