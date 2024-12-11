@@ -6,8 +6,8 @@
 /// @n Based on highView technology
 ///
 /// @author Rei Vilo
-/// @date 21 Mar 2024
-/// @version 801
+/// @date 21 Nov 2024
+/// @version 810
 ///
 /// @copyright (c) Rei Vilo, 2010-2024
 /// @copyright All rights reserved
@@ -39,7 +39,7 @@
 ///
 /// @brief Library release number
 ///
-#define hV_GUI_BASIC_RELEASE 801
+#define hV_GUI_BASIC_RELEASE 810
 
 // SDK
 #include "hV_HAL_Peripherals.h"
@@ -50,8 +50,8 @@
 // Other libraries
 #include "Screen_EPD_EXT3.h"
 
-#if (SCREEN_EPD_EXT3_RELEASE < 801)
-#error Required SCREEN_EPD_EXT3_RELEASE 801
+#if (SCREEN_EPD_EXT3_RELEASE < 810)
+#error Required SCREEN_EPD_EXT3_RELEASE 810
 #endif SCREEN_EPD_EXT3_RELEASE
 
 #if (TOUCH_MODE != USE_TOUCH_YES)
