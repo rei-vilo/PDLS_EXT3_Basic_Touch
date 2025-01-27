@@ -3,9 +3,9 @@ Doxyfile
 docs/
 latex/
 xml/
+html/
 Doxyfile.dox
 footer.html
-img/
 .github/
 *.ctu-info
 *.dump

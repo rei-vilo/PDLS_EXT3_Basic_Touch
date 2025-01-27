@@ -2,11 +2,17 @@
 
 [![Release](https://img.shields.io/github/v/release/rei-vilo/PDLS_EXT3_Basic_Touch)](https://github.com/rei-vilo/PDLS_EXT3_Basic_Touch/releases) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/79b420dc349245f0b9548255884de41b)](https://app.codacy.com/gh/rei-vilo/PDLS_EXT3_Basic_Touch/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rei-vilo/PDLS_EXT3_Basic_Touch&amp;utm_campaign=Badge_Grade) ![Arduino lint](https://github.com/rei-vilo/PDLS_EXT3_Basic_Touch/actions/workflows/main.yml/badge.svg) [![GitHub issues](https://img.shields.io/github/issues/rei-vilo/PDLS_EXT3_Basic_Global)](https://github.com/rei-vilo/PDLS_EXT3_Basic_Global/issues)
 
-[![](https://img.shields.io/badge/-Wiki-blue)](https://docs.pervasivedisplays.com/) [![](https://img.shields.io/badge/-User_Guide-blue)](https://pdls.pervasivedisplays.com/userguide/index.html) [![](https://img.shields.io/badge/-Reference_manual-blue)](https://rei-vilo.github.io/PDLS_EXT3_Basic_Documentation/html/index.html)
+[![](https://img.shields.io/badge/-Technical-Wiki-blue)](https://docs.pervasivedisplays.com/) [![](https://img.shields.io/badge/-User_Guide-blue)](https://pdls.pervasivedisplays.com/userguide/index.html) [![](https://img.shields.io/badge/-Reference_Manual-blue)](https://pdls.pervasivedisplays.com/reference/html/index.html)
 
 The Pervasive Displays Library Suite is specifically designed for the [Pervasive Displays](https://www.pervasivedisplays.com) e-paper screens, extension boards and evaluation kits.
 
 ![](https://pdls.pervasivedisplays.com/userguide/img/Logo_PDI_text_320.png)
+
+> ### The library **PDLS_EXT3_Basic_Touch** is deprecated. 
+> 
+> Use the library [PDLS_Basic](https://github.com/rei-vilo/PDLS_Basic) with the [Pervasive_Touch_Small](https://github.com/PervasiveDisplays/Pervasive_Touch_Small) instead.
+>
+> For more information, please refer to the technical note [Migrate from release 8 to release 9](https://pdls.pervasivedisplays.com/userguide/Volume5/Chapter1/Part6/Section22/).
 
 The **PDLS_EXT3_Basic_Touch** supports the screens
 
@@ -74,13 +80,13 @@ Hardware
 
 ## Licence
 
-**Copyright** &copy; Rei Vilo, 2010-2024
+**Copyright** &copy; Rei Vilo, 2010-2025
 
-For exclusive use with Pervasive Displays screens
+*For exclusive use with Pervasive Displays screens*
 
 **Licence** [Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)](./LICENCE.md)
 
 ![](img/by-sa.svg)
 
-**Portions** &copy; Pervasive Displays, 2010-2024
+**Portions** &copy; Pervasive Displays, 2010-2025
 

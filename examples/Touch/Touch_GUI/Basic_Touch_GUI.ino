@@ -5,10 +5,10 @@
 /// @details Library for Pervasive Displays EXT3 - Basic edition
 ///
 /// @author Rei Vilo
-/// @date 21 Nov 2024
-/// @version 810
+/// @date 21 Jan 2025
+/// @version 812
 ///
-/// @copyright (c) Rei Vilo, 2010-2024
+/// @copyright (c) Rei Vilo, 2010-2025
 /// @copyright Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
 /// @copyright For exclusive use with Pervasive Displays screens
 ///
@@ -33,14 +33,14 @@
 // Set parameters
 #define DISPLAY_GUI 1
 
-#if (SCREEN_EPD_EXT3_RELEASE < 810)
-#error Required SCREEN_EPD_EXT3_RELEASE 810
+#if (SCREEN_EPD_EXT3_RELEASE < 812)
+#error Required SCREEN_EPD_EXT3_RELEASE 812
 #endif SCREEN_EPD_EXT3_RELEASE
 
 #include "hV_GUI.h"
 
-#if (hV_GUI_BASIC_RELEASE < 810)
-#error Required hV_GUI_BASIC_RELEASE 810
+#if (hV_GUI_BASIC_RELEASE < 812)
+#error Required hV_GUI_BASIC_RELEASE 812
 #endif hV_GUI_BASIC_RELEASE
 
 // Define structures and classes

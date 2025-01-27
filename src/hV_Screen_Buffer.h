@@ -6,10 +6,10 @@
 /// @n Based on highView technology
 ///
 /// @author Rei Vilo
-/// @date 21 Nov 2024
-/// @version 810
+/// @date 21 Jan 2025
+/// @version 812
 ///
-/// @copyright (c) Rei Vilo, 2010-2024
+/// @copyright (c) Rei Vilo, 2010-2025
 /// @copyright All rights reserved
 /// @copyright For exclusive use with Pervasive Displays screens
 ///
@@ -42,7 +42,7 @@
 ///
 /// @brief Library release number
 ///
-#define hV_SCREEN_BUFFER_RELEASE 810
+#define hV_SCREEN_BUFFER_RELEASE 812
 
 // Other libraries
 #include "hV_Colours565.h"
@@ -371,8 +371,6 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
     //
     // === Touch section
     //
-#if (TOUCH_MODE != USE_TOUCH_NONE)
-
     /// @name Touch
     /// @note Those functions are optional, and thus defined as empty and not compulsory.
     /// @{
@@ -420,7 +418,6 @@ class hV_Screen_Buffer : protected hV_Font_Terminal
 
     /// @}
 
-#endif // TOUCH_MODE
     //
     // === End of Touch section
     //
