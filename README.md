@@ -8,6 +8,7 @@ The Pervasive Displays Library Suite is specifically designed for the [Pervasive
 
 ![](https://pdls.pervasivedisplays.com/userguide/img/Logo_PDI_text_320.png)
 
+> [!CAUTION]
 > ### The library **PDLS_EXT3_Basic_Touch** is deprecated. 
 > 
 > Use the library [PDLS_Basic](https://github.com/rei-vilo/PDLS_Basic) with the [Pervasive_Touch_Small](https://github.com/PervasiveDisplays/Pervasive_Touch_Small) instead.
