@@ -2,14 +2,13 @@
 
 [![Release](https://img.shields.io/github/v/release/rei-vilo/PDLS_EXT3_Basic_Touch)](https://github.com/rei-vilo/PDLS_EXT3_Basic_Touch/releases) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/79b420dc349245f0b9548255884de41b)](https://app.codacy.com/gh/rei-vilo/PDLS_EXT3_Basic_Touch/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rei-vilo/PDLS_EXT3_Basic_Touch&amp;utm_campaign=Badge_Grade) ![Arduino lint](https://github.com/rei-vilo/PDLS_EXT3_Basic_Touch/actions/workflows/main.yml/badge.svg) [![GitHub issues](https://img.shields.io/github/issues/rei-vilo/PDLS_EXT3_Basic_Global)](https://github.com/rei-vilo/PDLS_EXT3_Basic_Global/issues)
 
-[![](https://img.shields.io/badge/-Technical-Wiki-blue)](https://docs.pervasivedisplays.com/) [![](https://img.shields.io/badge/-User_Guide-blue)](https://pdls.pervasivedisplays.com/userguide/index.html) [![](https://img.shields.io/badge/-Reference_Manual-blue)](https://pdls.pervasivedisplays.com/reference/html/index.html)
+[![](https://img.shields.io/badge/-Technical_Wiki-blue)](https://docs.pervasivedisplays.com/) [![](https://img.shields.io/badge/-User_Guide-blue)](https://pdls.pervasivedisplays.com/userguide/index.html) [![](https://img.shields.io/badge/-Reference_Manual-blue)](https://pdls.pervasivedisplays.com/reference/html/index.html)
 
 The Pervasive Displays Library Suite is specifically designed for the [Pervasive Displays](https://www.pervasivedisplays.com) e-paper screens, extension boards and evaluation kits.
 
 ![](https://pdls.pervasivedisplays.com/userguide/img/Logo_PDI_text_320.png)
 
-> [!CAUTION]
-> The library **PDLS_EXT3_Basic_Touch** is deprecated. 
+> ### The library **PDLS_EXT3_Basic_Touch** is deprecated. 
 > 
 > Use the library [PDLS_Basic](https://github.com/rei-vilo/PDLS_Basic) with the [Pervasive_Touch_Small](https://github.com/PervasiveDisplays/Pervasive_Touch_Small) instead.
 >
